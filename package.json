@@ -1,0 +1,20 @@
+{
+  "name": "instagram-bree",
+  "version": "1.0.0",
+  "description": "A progressive web app instagram clone",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server"
+  },
+  "keywords": [
+    "pwa",
+    "progressive",
+    "web",
+    "app"
+  ],
+  "author": "Koko-Dev",
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^0.11.1"
+  }
+}
