@@ -1,7 +1,2 @@
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker
-        .register('/sw.js')
-        .then(function () {
-            console.log('Service worker is running!');
-        })
-}
+// This is a service worker
+
