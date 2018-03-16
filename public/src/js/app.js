@@ -22,7 +22,6 @@ window.addEventListener('beforeinstallprompt', function (event) {
 
     // return false to not do anything upon this event
     return false;
-    
-
 });
+
 
