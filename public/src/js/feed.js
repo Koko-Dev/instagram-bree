@@ -1,6 +1,7 @@
 var shareImageButton = document.querySelector('#share-image-button');
 var createPostArea = document.querySelector('#create-post');
 var closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
+var sharedMomentsArea = document.querySelector('#shared-moments');
 
 function openCreatePostModal() {
   createPostArea.style.display = 'block';
@@ -38,3 +39,34 @@ function closeCreatePostModal() {
 shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
+
+function createCard() {
+    var cardWrapper = document.createElement('div');
+    cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
+    var cardTitle = document.createElement('div');
+    cardTitle.className = 'mdl-card__title';
+    cardTitle.style.backgroundImage = 'url("/src/images/unamed-island.jpg")';
+    cardTitle.style.backgroundSize = 'cover';
+    cardTitle.style.height = '180px';
+    cardWrapper.appendChild(cardTitle);
+    var cardTitleTextElement = document.createElement('h2');
+    cardTitleTextElement.style.color = 'white';
+    cardTitleTextElement.className = 'mdl-card__title-text';
+    cardTitleTextElement.textContent = 'The Unnamed Island';
+    cardTitle.appendChild(cardTitleTextElement);
+    var cardSupportingText = document.createElement('div');
+    cardSupportingText.className = 'mdl-card__supporting-text';
+    cardSupportingText.textContent = 'In the Caribbean';
+    cardSupportingText.style.textAlign = 'center';
+    cardWrapper.appendChild(cardSupportingText);
+    componentHandler.upgradeElement(cardWrapper);
+    sharedMomentsArea.appendChild(cardWrapper);
+}
+
+fetch('https://httpbin.org/get')
+    .then(function(res) {
+        return res.json();
+    })
+    .then(function(data) {
+        createCard();
+    });
