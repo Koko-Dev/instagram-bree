@@ -1,10 +1,13 @@
 // This is a service worker
 // Service workers react to specific events, but no DOM access
 
+var CACHE_STATIC_NAME = 'static=v7';
+var CACHE_DYNAMIC_NAME = 'dynamic-v2';
+
 self.addEventListener('install', function (event) {
-    console.log('[Service Worker] Installing Servent Worker ...', event);
+    console.log('[Service Worker] Installing Service Worker ...', event);
     event.waitUntil(
-        caches.open('static')
+        caches.open(CACHE_STATIC_NAME)
             .then(function (cache) {
                 console.log('[Service Worker] Pre-Caching App Shell');
                 return cache.addAll([
@@ -26,7 +29,24 @@ self.addEventListener('install', function (event) {
 });
 
 self.addEventListener('activate', function (event) {
-    console.log('[Service Worker] Activating Servent Worker ...', event);
+    console.log('[Service Worker] Activating Service Worker ...', event);
+
+    // Clean up an old cache after a Service Worker Update required for changes to resources cached
+    // use waitUntil() to ensure the changes complete updating
+    event.waitUntil(
+        caches.keys()
+            .then(function (keyList) {
+                console.log('[Service Worker keyList]', keyList);
+                return Promise.all(keyList.map(function (key) {
+                    if (key != CACHE_STATIC_NAME && key != CACHE_DYNAMIC_NAME) {
+                        console.log('[Service Worker] Removing old cache', key);
+                        return caches.delete(key);
+                    }
+                }))
+            })
+    )
+    
+    
 
     // self.clients.clain() ensures that SWs are loaded or are activated correctly.
     // Not necessary, but does make the code more robust.
@@ -64,7 +84,7 @@ self.addEventListener('fetch', function (event) {
                     // Response from the Network
                         .then(function (res) {
                             // Open a new cache for incoming from Network
-                            return caches.open('dynamic')
+                            return caches.open(CACHE_DYNAMIC_NAME)
                                 .then(function (cache) {
                                     // Put the new resource in the dynamic cache
                                     // url-identifier and response (res)
@@ -73,6 +93,11 @@ self.addEventListener('fetch', function (event) {
                                     cache.put(event.request.url, res.clone());
                                     return res;
                                 })
+                        })
+                        .catch(function (err) {
+                            // on Network Fetch Response error
+
+
                         })
 
                 }

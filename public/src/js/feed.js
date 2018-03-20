@@ -50,7 +50,8 @@ function createCard() {
     cardTitle.style.height = '180px';
     cardWrapper.appendChild(cardTitle);
     var cardTitleTextElement = document.createElement('h2');
-    cardTitleTextElement.style.color = 'white';
+    cardTitleTextElement.style.color = '#F2F57B';
+    cardTitleTextElement.style.boxShadow = '5px 7px #888888';
     cardTitleTextElement.className = 'mdl-card__title-text';
     cardTitleTextElement.textContent = 'The Unnamed Island';
     cardTitle.appendChild(cardTitleTextElement);
