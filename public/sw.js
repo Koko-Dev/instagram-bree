@@ -10,7 +10,6 @@ self.addEventListener('install', function (event) {
                 cache.addAll([
                     '/',
                     '/index.html',
-                    '/help/index.html',
                     '/src/js/app.js',
                     '/src/js/feed.js',
                     '/src/js/promise.js',
@@ -18,7 +17,6 @@ self.addEventListener('install', function (event) {
                     '/src/js/material.min.js',
                     '/src/css/app.css',
                     '/src/css/feed.css',
-                    '/src/css/help.css',
                     'https://fonts.googleapis.com/css?family=Roboto:400,700',
                     'https://fonts.googleapis.com/icon?family=Material+Icons',
                     '/src/images/main-image.jpg',
