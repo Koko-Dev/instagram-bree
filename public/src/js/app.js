@@ -1,7 +1,7 @@
 var deferredPrompt;
 
 // Check to see if the browser supports Promises
-// If it is not, then point to polyfill promise.js
+// If it does not, then point to polyfill promise.js
 if (!window.Promise) {
     window.Promise = Promise;
 }
@@ -15,10 +15,9 @@ if ('serviceWorker' in navigator) {
 }
 
 // Chrome displays prompt after user visits site again after 5 minutes
-// To prevent this from happening and set our own time we prevent Chrome default
+// To prevent this from happening and set our own time, we prevent Chrome default
 window.addEventListener('beforeinstallprompt', function (event) {
     // To prevent Chrome from showing the banner
-
     console.log('beforeinstallprompt is fired', event);
 
     // event returns BeforeInstallPromptEvent method prompt() to display banner
@@ -26,7 +25,7 @@ window.addEventListener('beforeinstallprompt', function (event) {
     deferredPrompt = event;
     event.preventDefault();
 
-    // return false to not do anything upon this event
+    // return false to not do anything upon this event fire
     return false;
 });
 
