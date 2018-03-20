@@ -7,7 +7,7 @@ self.addEventListener('install', function (event) {
         caches.open('static')
             .then(function (cache) {
                 console.log('[Service Worker] Pre-Caching App Shell');
-                cache.addAll([
+                return cache.addAll([
                     '/',
                     '/index.html',
                     '/src/js/app.js',
@@ -53,12 +53,27 @@ self.addEventListener('fetch', function (event) {
     event.respondWith(
         caches.match(event.request)
             .then(function (response) {
+                // Response from the Cache
                 if (response) {
                     // returning the value from the cache
                     return response;
                 } else {
+                    // Begin Dynamic Caching -- Cache from Network
                     // if the key is not in the cache, store in a new cache
                     return fetch(event.request)
+                    // Response from the Network
+                        .then(function (res) {
+                            // Open a new cache for incoming from Network
+                            return caches.open('dynamic')
+                                .then(function (cache) {
+                                    // Put the new resource in the dynamic cache
+                                    // url-identifier and response (res)
+                                    // can only use response (res) once, so used res clone for caching
+                                    // Parameters: 
+                                    cache.put(event.request.url, res.clone());
+                                    return res;
+                                })
+                        })
 
                 }
             })
