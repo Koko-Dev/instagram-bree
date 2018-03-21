@@ -1,8 +1,8 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v20';
-var CACHE_DYNAMIC_NAME = 'dynamic-v2';
+var CACHE_STATIC_NAME = 'static-v21';
+var CACHE_DYNAMIC_NAME = 'dynamic-v3';
 
 self.addEventListener('install', function (event) {
     console.log('[Service Worker] Installing Service Worker ...', event);
@@ -109,16 +109,34 @@ self.addEventListener('activate', function (event) {
 //     );
 // });
 
-
-// Network with Cache Fallback
+// Network with Cache Fallback and Dynamic Caching
+// Not the best solution due to the browser timeout problem
+// If the network is down, will wait about 60 seconds trying to connect before turning to cache
 self.addEventListener('fetch', function (event) {
     event.respondWith(
         fetch(event.request)
+            .then(function (res) {
+                return caches.open(CACHE_DYNAMIC_NAME)
+                    .then(function (cache) {
+                        cache.put(event.request.url,  res.clone());
+                        return res;
+                    })
+            })
             .catch(function (err) {
                 return caches.match(event.request)
             })
     );
 });
+
+// Network with Cache Fallback
+// self.addEventListener('fetch', function (event) {
+//     event.respondWith(
+//         fetch(event.request)
+//             .catch(function (err) {
+//                 return caches.match(event.request)
+//             })
+//     );
+// });
 
 
 // Cache-only
