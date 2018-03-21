@@ -1,7 +1,7 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v15';
+var CACHE_STATIC_NAME = 'static-v16';
 var CACHE_DYNAMIC_NAME = 'dynamic-v2';
 
 self.addEventListener('install', function (event) {
@@ -89,7 +89,7 @@ self.addEventListener('fetch', function (event) {
                                     // can only use response (res) once, so used res clone for caching
                                     // Parameters:
                                     // temporarily disable cache.put to test initial Cache on Demand with Save Button
-                                    //cache.put(event.request.url, res.clone());
+                                    cache.put(event.request.url, res.clone());
                                     return res;
                                 })
                         })

@@ -41,7 +41,8 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 
-// Currently in use, allows us to save assets in cache on demand
+// Currently not in use, allows us to save assets in cache on demand otherwise
+/*
 function onSaveButtonClicked(event) {
     // We get the event object because we have an event listener
     console.log('[feed.js] ... clicked', event);
@@ -62,6 +63,7 @@ function onSaveButtonClicked(event) {
             })
     }
 }
+*/
 
 function createCard() {
     var cardWrapper = document.createElement('div');
@@ -84,12 +86,12 @@ function createCard() {
     cardSupportingText.style.textAlign = 'center';
     
     // Used for Cache on Demand via Save Button
-    var cardSaveButton = document.createElement('button');
-    cardSaveButton.textContent = 'Save';
-    cardSaveButton.style.backgroundColor = 'darkgray';
-    cardSaveButton.addEventListener('click', onSaveButtonClicked);
-    cardSupportingText.appendChild(cardSaveButton);
-    cardWrapper.appendChild(cardSupportingText);
+    // var cardSaveButton = document.createElement('button');
+    // cardSaveButton.textContent = 'Save';
+    // cardSaveButton.style.backgroundColor = 'darkgray';
+    // cardSaveButton.addEventListener('click', onSaveButtonClicked);
+    // cardSupportingText.appendChild(cardSaveButton);
+    // cardWrapper.appendChild(cardSupportingText);
 
     componentHandler.upgradeElement(cardWrapper);
     sharedMomentsArea.appendChild(cardWrapper);
