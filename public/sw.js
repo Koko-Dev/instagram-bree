@@ -1,7 +1,7 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v16';
+var CACHE_STATIC_NAME = 'static-v18';
 var CACHE_DYNAMIC_NAME = 'dynamic-v2';
 
 self.addEventListener('install', function (event) {
@@ -13,6 +13,7 @@ self.addEventListener('install', function (event) {
                 return cache.addAll([
                     '/',
                     '/index.html',
+                    '/offline.html',
                     '/src/js/app.js',
                     '/src/js/feed.js',
                     '/src/js/promise.js',
@@ -50,15 +51,16 @@ self.addEventListener('activate', function (event) {
     // Not necessary, but does make the code more robust.
     return self.clients.claim();
 });
+/*
 
 // Non-Life-Cycle Event
 
-/* When a fetch event is triggered,  such as an img tag requesting an image,
+/!* When a fetch event is triggered,  such as an img tag requesting an image,
  *  we hijack the output and respond with whatever we want to respond with.
  *  The point is, the response has to go through the Service Worker
  *  Using fetch(), we can look at a SW as a network proxy.
  *  Use respondsWith() so that every outgoing fetch request and response goes through the SW.
- */
+ *!/
 self.addEventListener('fetch', function (event) {
     // fetch event will happen, for example, if html asks for img
     //console.log('[Service Worker] Fetching something ...', event);
@@ -94,9 +96,28 @@ self.addEventListener('fetch', function (event) {
                                 })
                         })
                         .catch(function (err) {
-                            // on Network Fetch Response error
+                            // on Network Fetch Response error we turn to our fallback - offline.html
+                            return caches.open(CACHE_STATIC_NAME)
+                                .then(function (cache) {
+                                    // get the offline.html file
+                                    return cache.match('/offline.html')
+                                    
+                                    
+                                })
+                            
                         })
                 }
             })
+    );
+});
+*/
+
+// FOR CACHE ONLY
+self.addEventListener('fetch', function (event) {
+    event.respondWith(
+        caches.match(event.request)
+            /*.then(function (response) {
+                return response;
+            })*/
     );
 });
