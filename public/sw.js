@@ -61,52 +61,61 @@ self.addEventListener('activate', function (event) {
  *  Using fetch(), we can look at a SW as a network proxy.
  *  Use respondsWith() so that every outgoing fetch request and response goes through the SW.
  */
+// self.addEventListener('fetch', function (event) {
+//     // fetch event will happen, for example, if html asks for img
+//     //console.log('[Service Worker] Fetching something ...', event);
+//
+//     // Use respondsWith() to Override the data which gets sent back
+//     //event.respondWith(fetch(event.request));
+//
+//     // fetch the data from the Cache API
+//     // request are your keys == keys are a request object, and store in new cache
+//     event.respondWith(
+//         caches.match(event.request)
+//             .then(function (response) {
+//                 // Response from the Cache
+//                 if (response) {
+//                     // returning the value from the cache
+//                     return response;
+//                 } else {
+//                     // Begin Dynamic Caching -- Cache from Network
+//                     // if the key is not in the cache, store in a new cache
+//                     return fetch(event.request)
+//                     // Response from the Network
+//                         .then(function (res) {
+//                             // Open a new cache for incoming from Network
+//                             return caches.open(CACHE_DYNAMIC_NAME)
+//                                 .then(function (cache) {
+//                                     // Put the new resource in the dynamic cache
+//                                     // url-identifier and response (res)
+//                                     // can only use response (res) once, so used res clone for caching
+//                                     // Parameters:
+//                                     // temporarily disable cache.put to test initial Cache on Demand with Save Button
+//                                     cache.put(event.request.url, res.clone());
+//                                     return res;
+//                                 })
+//                         })
+//                         .catch(function (err) {
+//                             // on Network Fetch Response error we turn to our fallback - offline.html
+//                             return caches.open(CACHE_STATIC_NAME)
+//                                 .then(function (cache) {
+//                                     // get the offline.html file
+//                                     return cache.match('/offline.html')
+//                                 })
+//
+//                         })
+//                 }
+//             })
+//     );
+// });
+
+
+// Network with Cache Fallback
 self.addEventListener('fetch', function (event) {
-    // fetch event will happen, for example, if html asks for img
-    //console.log('[Service Worker] Fetching something ...', event);
-
-    // Use respondsWith() to Override the data which gets sent back
-    //event.respondWith(fetch(event.request));
-
-    // fetch the data from the Cache API
-    // request are your keys == keys are a request object, and store in new cache
     event.respondWith(
-        caches.match(event.request)
-            .then(function (response) {
-                // Response from the Cache
-                if (response) {
-                    // returning the value from the cache
-                    return response;
-                } else {
-                    // Begin Dynamic Caching -- Cache from Network
-                    // if the key is not in the cache, store in a new cache
-                    return fetch(event.request)
-                    // Response from the Network
-                        .then(function (res) {
-                            // Open a new cache for incoming from Network
-                            return caches.open(CACHE_DYNAMIC_NAME)
-                                .then(function (cache) {
-                                    // Put the new resource in the dynamic cache
-                                    // url-identifier and response (res)
-                                    // can only use response (res) once, so used res clone for caching
-                                    // Parameters:
-                                    // temporarily disable cache.put to test initial Cache on Demand with Save Button
-                                    cache.put(event.request.url, res.clone());
-                                    return res;
-                                })
-                        })
-                        .catch(function (err) {
-                            // on Network Fetch Response error we turn to our fallback - offline.html
-                            return caches.open(CACHE_STATIC_NAME)
-                                .then(function (cache) {
-                                    // get the offline.html file
-                                    return cache.match('/offline.html')
-
-
-                                })
-
-                        })
-                }
+        fetch(event.request)
+            .catch(function (err) {
+                return caches.match(event.request)
             })
     );
 });
