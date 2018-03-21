@@ -1,7 +1,7 @@
-// This is a service worker
+// This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static=v7';
+var CACHE_STATIC_NAME = 'static-v7';
 var CACHE_DYNAMIC_NAME = 'dynamic-v2';
 
 self.addEventListener('install', function (event) {
@@ -44,9 +44,7 @@ self.addEventListener('activate', function (event) {
                     }
                 }))
             })
-    )
-    
-    
+    );
 
     // self.clients.clain() ensures that SWs are loaded or are activated correctly.
     // Not necessary, but does make the code more robust.
@@ -96,14 +94,12 @@ self.addEventListener('fetch', function (event) {
                         })
                         .catch(function (err) {
                             // on Network Fetch Response error
-
-
                         })
-
                 }
             })
     );
 });
+
 
 
 
