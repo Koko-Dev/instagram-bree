@@ -1,8 +1,8 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v25';
-var CACHE_DYNAMIC_NAME = 'dynamic-v7';
+var CACHE_STATIC_NAME = 'static-v26';
+var CACHE_DYNAMIC_NAME = 'dynamic-v8';
 
 self.addEventListener('install', function (event) {
     console.log('[Service Worker] Installing Service Worker ...', event);
@@ -114,22 +114,77 @@ self.addEventListener('activate', function (event) {
 // Used with Cache, then Network with Time Comparison and Dynamic Caching
 // Requires SW and feed.js
 // This will will put all the static files in the dynamic cache. This will be fixed later.
+// Another problem is that this is bad for offline first because we never fetch from cache
+// Combining original stragegy with Cache then Network with Time Comparison and Dynamic Caching
+//    is called Cache, then Network with Offline Support
 self.addEventListener('fetch', function (event) {
-    event.respondWith(
-        // Reaches out to cache first
-        caches.open(CACHE_DYNAMIC_NAME)
-            .then(function (cache) {
-                // Nonetheless, we make a Network Request
-                return fetch(event.request)
-                    .then(function (res) {
-                        // If it is there, store in the dynamic cache, if not do nothing
-                        // If we don't get it from the cache and can't get it from Network, out of luck
-                        cache.put(event.request, res.clone());
-                        // res is returned so that it reaches feed.js
-                        return res;
-                    })
-            })
-    );
+    var url = 'https://httpbin.org/get';
+    if (event.request.url.indexOf(url) > -1) {
+        // Cache then Network Strategy with Time Comparison and Dynamic Caching for var url only
+        // But it fails when network is offline because we don't cache.match
+        // This is a good strategy for use cases when we do have internet access and
+        // we want to get something on screen quickly
+        //  because we fetch it from the cache first
+        //  Bad for offline because we don't try to fetch requests from the cache only
+        event.respondWith(
+            // Reaches out to cache first
+            caches.open(CACHE_DYNAMIC_NAME)
+                .then(function (cache) {
+                    // Nonetheless, we make a Network Request
+                    return fetch(event.request)
+                        .then(function (res) {
+                            // If it is there, store in the dynamic cache, if not do nothing
+                            // If we don't get it from the cache and can't get it from Network, out of luck
+                            cache.put(event.request, res.clone());
+                            // res is returned so that it reaches feed.js
+                            return res;
+                        })
+                })
+        );
+    } else {
+        // For all other urls that don't use the Cache, then Network with Time Comp and Dyn Cache Strategy
+        // We will use Cache with Network Fallback Strategy
+        // Drawback is since we fetch from cache first we override updated data with Outdated Data.
+        event.respondWith(
+            caches.match(event.request)
+                .then(function (response) {
+                    // Response from the Cache
+                    if (response) {
+                        // returning the value from the cache
+                        return response;
+                    } else {
+                        // Begin Dynamic Caching -- Cache from Network
+                        // if the key is not in the cache, store in a new cache
+                        return fetch(event.request)
+                        // Response from the Network
+                            .then(function (res) {
+                                // Open a new cache for incoming from Network
+                                return caches.open(CACHE_DYNAMIC_NAME)
+                                    .then(function (cache) {
+                                        // Put the new resource in the dynamic cache
+                                        // url-identifier and response (res)
+                                        // can only use response (res) once, so used res clone for caching
+                                        // Parameters:
+                                        // temporarily disable cache.put to test initial Cache on Demand with Save Button
+                                        cache.put(event.request.url, res.clone());
+                                        return res;
+                                    })
+                            })
+                            .catch(function (err) {
+                                // on Network Fetch Response error we turn to our fallback - offline.html
+                                return caches.open(CACHE_STATIC_NAME)
+                                    .then(function (cache) {
+                                        // get the offline.html file
+                                        return cache.match('/offline.html')
+                                    })
+
+                            })
+                    }
+                })
+        )
+
+    }
+
 });
 
 
