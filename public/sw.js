@@ -1,8 +1,8 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v21';
-var CACHE_DYNAMIC_NAME = 'dynamic-v3';
+var CACHE_STATIC_NAME = 'static-v25';
+var CACHE_DYNAMIC_NAME = 'dynamic-v7';
 
 self.addEventListener('install', function (event) {
     console.log('[Service Worker] Installing Service Worker ...', event);
@@ -54,6 +54,8 @@ self.addEventListener('activate', function (event) {
 
 
 // Non-Life-Cycle Event
+
+
 
 /* When a fetch event is triggered,  such as an img tag requesting an image,
  *  we hijack the output and respond with whatever we want to respond with.
@@ -109,24 +111,58 @@ self.addEventListener('activate', function (event) {
 //     );
 // });
 
-// Network with Cache Fallback and Dynamic Caching
-// Not the best solution due to the browser timeout problem
-// If the network is down, will wait about 60 seconds trying to connect before turning to cache
+// Used with Cache, then Network with Time Comparison and Dynamic Caching
+// Requires SW and feed.js
+// This will will put all the static files in the dynamic cache. This will be fixed later.
 self.addEventListener('fetch', function (event) {
     event.respondWith(
-        fetch(event.request)
-            .then(function (res) {
-                return caches.open(CACHE_DYNAMIC_NAME)
-                    .then(function (cache) {
-                        cache.put(event.request.url,  res.clone());
+        // Reaches out to cache first
+        caches.open(CACHE_DYNAMIC_NAME)
+            .then(function (cache) {
+                // Nonetheless, we make a Network Request
+                return fetch(event.request)
+                    .then(function (res) {
+                        // If it is there, store in the dynamic cache, if not do nothing
+                        // If we don't get it from the cache and can't get it from Network, out of luck
+                        cache.put(event.request, res.clone());
+                        // res is returned so that it reaches feed.js
                         return res;
                     })
             })
-            .catch(function (err) {
-                return caches.match(event.request)
-            })
     );
 });
+
+
+
+
+// Cache, then Network
+// Gets asset as quickly as possible from the Cache and then also try to fetch update from the Network
+// If Network is faster than retrieving from cache, then Network first
+// Simultaneously, Page reaches out to cache While Page sends out Network Request that is intercepted by SW
+// Simultaneously, SW will try to get response from Network (and SW receives response) While we return
+//  fetch data to Page.
+// Also use Dynamic Caching
+// Implemented by sw.js and feed.js
+
+
+// Network with Cache Fallback and Dynamic Caching
+// Not the best solution due to the browser timeout problem
+// If the network is down, will wait about 60 seconds trying to connect before turning to cache
+// self.addEventListener('fetch', function (event) {
+//     event.respondWith(
+//         fetch(event.request)
+//             .then(function (res) {
+//                 return caches.open(CACHE_DYNAMIC_NAME)
+//                     .then(function (cache) {
+//                         cache.put(event.request.url,  res.clone());
+//                         return res;
+//                     })
+//             })
+//             .catch(function (err) {
+//                 return caches.match(event.request)
+//             })
+//     );
+// });
 
 // Network with Cache Fallback
 // self.addEventListener('fetch', function (event) {
@@ -152,5 +188,3 @@ self.addEventListener('fetch', function (event) {
 //         fetch(event.request)
 //     )
 // });
-
-

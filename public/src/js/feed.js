@@ -47,7 +47,7 @@ function onSaveButtonClicked(event) {
     // We get the event object because we have an event listener
     console.log('[feed.js] ... clicked', event);
 
-    // If 'caches' Object exists in 'window' Object
+    // If 'caches' Object exists in 'window' Object (User's Browser)
     //  then open/create a cache named 'user-requested'
     if ('caches' in window) {
         caches.open('user-requested')
@@ -64,6 +64,13 @@ function onSaveButtonClicked(event) {
     }
 }
 */
+
+// Helper function to clear cards
+function clearCards() {
+    while (sharedMomentsArea.hasChildNodes()) {
+        sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
+    }
+}
 
 function createCard() {
     var cardWrapper = document.createElement('div');
@@ -97,11 +104,49 @@ function createCard() {
     sharedMomentsArea.appendChild(cardWrapper);
 }
 
-fetch('https://httpbin.org/get')
+
+
+// To reach out to the Network to fetch some data
+// Used in Cache on Demand
+// Used with Cache, then Network with Time Comparison and Dynamic Caching
+var url = 'https://httpbin.org/get';
+var networkDataReceived = false;
+
+fetch(url)
     .then(function (res) {
         return res.json();
     })
     .then(function (data) {
+        // If networkDataReceived is true then Network is faster
+        networkDataReceived = true;
+        console.log('Data from Web: ', data);
+        // Network faster; clear last card and call the code that updates your page
+        clearCards();
         createCard();
     });
+
+
+// Used with Cache, then Network with Time Comparison and Dynamic Caching
+// Can we access 'caches' Object from the User's Browser (window)?
+if ('caches' in window) {
+   // Can I find the URL I am trying to access in my cache?
+    caches.match(url)
+        .then(function (response) {
+            // response = null, if not in cache. IF null, do nothing
+            if (response) {
+                return response.json();
+            }
+        })
+        .then(function (data) {
+            // if the URL is found in the cache
+            console.log('Data from Cache:  ', data);
+
+            // If Network is faster, do not createCard()
+            if (!networkDataReceived) {
+                // Cache faster; clear last card and call the code that updates your page
+                clearCards();
+                createCard();
+            }
+        })
+}
 
