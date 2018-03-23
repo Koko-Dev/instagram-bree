@@ -1,8 +1,24 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v26';
-var CACHE_DYNAMIC_NAME = 'dynamic-v8';
+var CACHE_STATIC_NAME = 'static-v38';
+var CACHE_DYNAMIC_NAME = 'dynamic-v19';
+var STATIC_FILES = [
+    '/',
+    '/index.html',
+    '/offline.html',
+    '/src/js/app.js',
+    '/src/js/feed.js',
+    '/src/js/promise.js',
+    '/src/js/fetch.js',
+    '/src/js/material.min.js',
+    '/src/css/app.css',
+    '/src/css/feed.css',
+    '/src/images/main-image.jpg',
+    'https://fonts.googleapis.com/css?family=Roboto:400,700',
+    'https://fonts.googleapis.com/icon?family=Material+Icons',
+    'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
+];
 
 self.addEventListener('install', function (event) {
     console.log('[Service Worker] Installing Service Worker ...', event);
@@ -10,22 +26,7 @@ self.addEventListener('install', function (event) {
         caches.open(CACHE_STATIC_NAME)
             .then(function (cache) {
                 console.log('[Service Worker] Pre-Caching App Shell');
-                return cache.addAll([
-                    '/',
-                    '/index.html',
-                    '/offline.html',
-                    '/src/js/app.js',
-                    '/src/js/feed.js',
-                    '/src/js/promise.js',
-                    '/src/js/fetch.js',
-                    '/src/js/material.min.js',
-                    '/src/css/app.css',
-                    '/src/css/feed.css',
-                    'https://fonts.googleapis.com/css?family=Roboto:400,700',
-                    'https://fonts.googleapis.com/icon?family=Material+Icons',
-                    '/src/images/main-image.jpg',
-                    'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
-                ]);
+                return cache.addAll(STATIC_FILES);
             }));
 });
 
@@ -119,6 +120,7 @@ self.addEventListener('activate', function (event) {
 //    is called Cache, then Network with Offline Support
 self.addEventListener('fetch', function (event) {
     var url = 'https://httpbin.org/get';
+    var staticAssets = STATIC_FILES;
     if (event.request.url.indexOf(url) > -1) {
         // Cache then Network Strategy with Time Comparison and Dynamic Caching for var url only
         // But it fails when network is offline because we don't cache.match
@@ -140,6 +142,12 @@ self.addEventListener('fetch', function (event) {
                             return res;
                         })
                 })
+        );
+    } else if (new RegExp('\\b' + STATIC_FILES.join('\\b|\\b') + '\\b').test(event.request.url)) {
+        // Regex exp tests if the event.request.url match any of the words in the .join STATIC_FILES.
+        // if true, then cache-only strategy
+        event.respondWith(
+            caches.match(event.request)
         );
     } else {
         // For all other urls that don't use the Cache, then Network with Time Comp and Dyn Cache Strategy
@@ -174,8 +182,12 @@ self.addEventListener('fetch', function (event) {
                                 // on Network Fetch Response error we turn to our fallback - offline.html
                                 return caches.open(CACHE_STATIC_NAME)
                                     .then(function (cache) {
-                                        // get the offline.html file
-                                        return cache.match('/offline.html')
+                                        // If event.request.url if from help page, then 
+                                        // get the offline.html file when network is down, if /help not cached
+                                        if (event.request.url.indexOf('/help') > -1) {
+                                            return cache.match('/offline.html');
+                                        }
+
                                     })
 
                             })
@@ -186,9 +198,6 @@ self.addEventListener('fetch', function (event) {
     }
 
 });
-
-
-
 
 // Cache, then Network
 // Gets asset as quickly as possible from the Cache and then also try to fetch update from the Network

@@ -77,19 +77,19 @@ function createCard() {
     cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
     var cardTitle = document.createElement('div');
     cardTitle.className = 'mdl-card__title';
-    cardTitle.style.backgroundImage = 'url("/src/images/unamed-island.jpg")';
+    cardTitle.style.backgroundImage = 'url("/src/images/breeGrams-main.jpg")';
     cardTitle.style.backgroundSize = 'cover';
     cardTitle.style.height = '180px';
     cardWrapper.appendChild(cardTitle);
     var cardTitleTextElement = document.createElement('h2');
-    cardTitleTextElement.style.color = '#F2F57B';
-    cardTitleTextElement.style.boxShadow = '5px 7px #888888';
+    cardTitleTextElement.style.color = '#8000ff';
+    cardTitleTextElement.style.boxShadow = '5px 6px #ff9999';
     cardTitleTextElement.className = 'mdl-card__title-text';
-    cardTitleTextElement.textContent = 'The Unnamed Island';
+    cardTitleTextElement.textContent = 'No Holding Back';
     cardTitle.appendChild(cardTitleTextElement);
     var cardSupportingText = document.createElement('div');
     cardSupportingText.className = 'mdl-card__supporting-text';
-    cardSupportingText.textContent = 'In the Caribbean';
+    cardSupportingText.textContent = 'A Girl with Dreams';
     cardSupportingText.style.textAlign = 'center';
     
     // Used for Cache on Demand via Save Button
