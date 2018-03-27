@@ -15,11 +15,28 @@ var STATIC_FILES = [
     '/src/css/app.css',
     '/src/css/feed.css',
     '/src/images/parkour-main.jpg',
-    '/src/images/breeGrams-main.jpg',
     'https://fonts.googleapis.com/css?family=Roboto:400,700',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
+
+// Removes oldest assets of cache recursively until the amount of assets are less than maxItems allowed
+function trimCache(cacheName, maxItems) {
+    caches.open(cacheName)
+        .then(function(cache) {
+            return cache.keys()
+                .then(function (keys) {
+                    // Recursive until condition is no longer true
+                    // Deletes the oldest Assets first
+                    if (keys.length > maxItems) {
+                        cache.delete(keys[0])
+                            .then(trimCache(cacheName, maxItems));
+                    }
+                })
+        })
+}
+
+
 
 self.addEventListener('install', function (event) {
     console.log('[Service Worker] Installing Service Worker ...', event);
@@ -161,6 +178,9 @@ self.addEventListener('fetch', function (event) {
                     // Nonetheless, we make a Network Request
                     return fetch(event.request)
                         .then(function (res) {
+                            // Trim Dynamic Cache
+                            trimCache(CACHE_DYNAMIC_NAME, 10);
+                            
                             // If it is there, store in the dynamic cache, if not do nothing
                             // If we don't get it from the cache and can't get it from Network, out of luck
                             cache.put(event.request, res.clone());
@@ -195,10 +215,12 @@ self.addEventListener('fetch', function (event) {
                                 // Open a new cache for incoming from Network
                                 return caches.open(CACHE_DYNAMIC_NAME)
                                     .then(function (cache) {
+                                        // Trim Dynamic Cache
+                                        trimCache(CACHE_DYNAMIC_NAME, 10);
+
                                         // Put the new resource in the dynamic cache
                                         // url-identifier and response (res)
-                                        // can only use response (res) once, so used res clone for caching
-                                        // Parameters:
+                                        // can only use response (res) once, so used res.clone() for caching
                                         // temporarily disable cache.put to test initial Cache on Demand with Save Button
                                         cache.put(event.request.url, res.clone());
                                         return res;
