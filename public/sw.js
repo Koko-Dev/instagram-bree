@@ -1,8 +1,8 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v38';
-var CACHE_DYNAMIC_NAME = 'dynamic-v19';
+var CACHE_STATIC_NAME = 'static-v63';
+var CACHE_DYNAMIC_NAME = 'dynamic-v63';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -14,7 +14,8 @@ var STATIC_FILES = [
     '/src/js/material.min.js',
     '/src/css/app.css',
     '/src/css/feed.css',
-    '/src/images/main-image.jpg',
+    '/src/images/parkour-main.jpg',
+    '/src/images/breeGrams-main.jpg',
     'https://fonts.googleapis.com/css?family=Roboto:400,700',
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
@@ -53,10 +54,35 @@ self.addEventListener('activate', function (event) {
     return self.clients.claim();
 });
 
+// Helper function to test if URL from STATIC_FILES is being called
+// function isInArray(string, array) {
+//     for (var i = 0; i < array.length; i++) {
+//         if (array[i] === string) {
+//             return true;
+//         }
+//     }
+//     return false;
+// }
+
+// Improved Helper function to test if URL from STATIC_FILES is being called
+// The one above would not catch '/',  '/index.html', etc.
+function isInArray(string, array) {
+    var cachePath;
+
+    // request targets domain where we serve the page from (i.e. NOT a CDN)
+    if (string.indexOf(self.origin) === 0) {
+        console.log('matched ', string);
+
+        // take the part of the URL AFTER the domain (e.g. after localhost:8080)
+        cachePath = string.substring(self.origin.length);
+    } else {
+        cachePath = string;
+    }
+    return array.indexOf(cachePath) > -1;
+}
+
 
 // Non-Life-Cycle Event
-
-
 
 /* When a fetch event is triggered,  such as an img tag requesting an image,
  *  we hijack the output and respond with whatever we want to respond with.
@@ -116,7 +142,7 @@ self.addEventListener('activate', function (event) {
 // Requires SW and feed.js
 // This will will put all the static files in the dynamic cache. This will be fixed later.
 // Another problem is that this is bad for offline first because we never fetch from cache
-// Combining original stragegy with Cache then Network with Time Comparison and Dynamic Caching
+// Combining original strategy with Cache then Network with Time Comparison and Dynamic Caching
 //    is called Cache, then Network with Offline Support
 self.addEventListener('fetch', function (event) {
     var url = 'https://httpbin.org/get';
@@ -140,10 +166,10 @@ self.addEventListener('fetch', function (event) {
                             cache.put(event.request, res.clone());
                             // res is returned so that it reaches feed.js
                             return res;
-                        })
+                        });
                 })
         );
-    } else if (new RegExp('\\b' + STATIC_FILES.join('\\b|\\b') + '\\b').test(event.request.url)) {
+    } else if (isInArray(event.request.url, STATIC_FILES))  {
         // Regex exp tests if the event.request.url match any of the words in the .join STATIC_FILES.
         // if true, then cache-only strategy
         event.respondWith(
@@ -184,19 +210,30 @@ self.addEventListener('fetch', function (event) {
                                     .then(function (cache) {
                                         // If event.request.url if from help page, then 
                                         // get the offline.html file when network is down, if /help not cached
-                                        if (event.request.url.indexOf('/help') > -1) {
+                                        // if (event.request.url.indexOf('/help')) {
+                                        //     return cache.match('/offline.html');
+                                        // }
+
+                                        // A better way.. 
+                                        // If the 'accept' header includes 'text/html' then return offline.html page
+                                        if (event.request.headers.get('accept').includes('text/html')) {
+                                            console.log('[ServiceWorker Worker] ... Accept: "text/html"', event.request.headers.get('accept'));
+                                            /*The output from:
+                                                        console.log('[ServiceWorker Worker] ... Accept: "text/html"', event.request.headers.get('accept'));
+                                            *       was:
+                                            *           text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*;q=0.8
+                                            *       but you had to use get() to get it.
+                                            *
+                                            *           */
+
                                             return cache.match('/offline.html');
                                         }
-
-                                    })
-
-                            })
+                                    });
+                            });
                     }
                 })
-        )
-
+        );
     }
-
 });
 
 // Cache, then Network

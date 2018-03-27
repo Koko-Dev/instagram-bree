@@ -80,10 +80,12 @@ function createCard() {
     cardTitle.style.backgroundImage = 'url("/src/images/breeGrams-main.jpg")';
     cardTitle.style.backgroundSize = 'cover';
     cardTitle.style.height = '180px';
+    //cardTitle.style.fontWeight = 'bold';
+    //cardTitle.style.zIndex = 10;
     cardWrapper.appendChild(cardTitle);
     var cardTitleTextElement = document.createElement('h2');
-    cardTitleTextElement.style.color = '#8000ff';
-    cardTitleTextElement.style.boxShadow = '5px 6px #ff9999';
+    cardTitleTextElement.style.color = '#C9BAB1';
+    cardTitleTextElement.style.boxShadow = '3px 5px #D9E0EF';
     cardTitleTextElement.className = 'mdl-card__title-text';
     cardTitleTextElement.textContent = 'No Holding Back';
     cardTitle.appendChild(cardTitleTextElement);
@@ -97,9 +99,9 @@ function createCard() {
     // cardSaveButton.textContent = 'Save';
     // cardSaveButton.style.backgroundColor = 'darkgray';
     // cardSaveButton.addEventListener('click', onSaveButtonClicked);
-    // cardSupportingText.appendChild(cardSaveButton);
-    // cardWrapper.appendChild(cardSupportingText);
+    //cardSupportingText.appendChild(cardSaveButton);
 
+    cardWrapper.appendChild(cardSupportingText);
     componentHandler.upgradeElement(cardWrapper);
     sharedMomentsArea.appendChild(cardWrapper);
 }
