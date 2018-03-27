@@ -16,6 +16,6 @@
   "license": "ISC",
   "dependencies": {
     "http-server": "^0.11.1",
-    "npm": "^5.7.1"
+    "npm": "^5.8.0"
   }
 }
