@@ -111,18 +111,44 @@ function createCard() {
 // To reach out to the Network to fetch some data
 // Used in Cache on Demand
 // Used with Cache, then Network with Time Comparison and Dynamic Caching
-var url = 'https://httpbin.org/get';
+//var url = 'https://httpbin.org/get';
 var networkDataReceived = false;
 
-fetch(url)
+// For POST request
+var url = 'https://httpbin.org/post';
+
+
+// Default is GET request
+// fetch(url)
+//     .then(function (res) {
+//         return res.json();
+//     })
+//     .then(function (data) {
+//         // If networkDataReceived is true then Network is faster
+//         networkDataReceived = true;
+//         console.log('Data from Web: ', data);
+//         // Network faster; clear last card and call the code that updates your page
+//         clearCards();
+//         createCard();
+//     });
+
+// Testing for a POST request instead
+fetch(url, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+        message: 'Some extraordinary message'
+    })
+})
     .then(function (res) {
         return res.json();
     })
     .then(function (data) {
-        // If networkDataReceived is true then Network is faster
         networkDataReceived = true;
-        console.log('Data from Web: ', data);
-        // Network faster; clear last card and call the code that updates your page
+        console.log('From web', data);
         clearCards();
         createCard();
     });
