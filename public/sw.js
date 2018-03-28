@@ -1,8 +1,8 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v69';
-var CACHE_DYNAMIC_NAME = 'dynamic-v67';
+var CACHE_STATIC_NAME = 'static-v71';
+var CACHE_DYNAMIC_NAME = 'dynamic-v69';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -34,7 +34,7 @@ var STATIC_FILES = [
 //                     }
 //                 })
 //         })
-}
+// }
 
 
 

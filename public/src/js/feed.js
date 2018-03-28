@@ -42,7 +42,6 @@ function openCreatePostModal() {
     //             }
     //         })
     // }
-    
 }
 
 function closeCreatePostModal() {
