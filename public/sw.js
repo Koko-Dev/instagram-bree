@@ -1,8 +1,8 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v66';
-var CACHE_DYNAMIC_NAME = 'dynamic-v66';
+var CACHE_STATIC_NAME = 'static-v69';
+var CACHE_DYNAMIC_NAME = 'dynamic-v67';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -21,19 +21,19 @@ var STATIC_FILES = [
 ];
 
 // Removes oldest assets of cache recursively until the amount of assets are less than maxItems allowed
-function trimCache(cacheName, maxItems) {
-    caches.open(cacheName)
-        .then(function(cache) {
-            return cache.keys()
-                .then(function (keys) {
-                    // Recursive until condition is no longer true
-                    // Deletes the oldest Assets first
-                    if (keys.length > maxItems) {
-                        cache.delete(keys[0])
-                            .then(trimCache(cacheName, maxItems));
-                    }
-                })
-        })
+// function trimCache(cacheName, maxItems) {
+//     caches.open(cacheName)
+//         .then(function(cache) {
+//             return cache.keys()
+//                 .then(function (keys) {
+//                     // Recursive until condition is no longer true
+//                     // Deletes the oldest Assets first
+//                     if (keys.length > maxItems) {
+//                         cache.delete(keys[0])
+//                             .then(trimCache(cacheName, maxItems));
+//                     }
+//                 })
+//         })
 }
 
 
@@ -179,7 +179,7 @@ self.addEventListener('fetch', function (event) {
                     return fetch(event.request)
                         .then(function (res) {
                             // Trim Dynamic Cache
-                            trimCache(CACHE_DYNAMIC_NAME, 10);
+                            //trimCache(CACHE_DYNAMIC_NAME, 10);
                             
                             // If it is there, store in the dynamic cache, if not do nothing
                             // If we don't get it from the cache and can't get it from Network, out of luck
@@ -216,7 +216,7 @@ self.addEventListener('fetch', function (event) {
                                 return caches.open(CACHE_DYNAMIC_NAME)
                                     .then(function (cache) {
                                         // Trim Dynamic Cache
-                                        trimCache(CACHE_DYNAMIC_NAME, 10);
+                                        //trimCache(CACHE_DYNAMIC_NAME, 10);
 
                                         // Put the new resource in the dynamic cache
                                         // url-identifier and response (res)

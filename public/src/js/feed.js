@@ -3,9 +3,12 @@ var createPostArea = document.querySelector('#create-post');
 var closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 var sharedMomentsArea = document.querySelector('#shared-moments');
 
+
+// click listener
 function openCreatePostModal() {
     createPostArea.style.display = 'block';
 
+     // App Install Banner                                                                                                  \
     // Check to see if var deferredPrompt from app.js is set
     // This will only work IFF Chrome tried to set the prompt first according to their criteria
     //    which is when user visits app the second time after five minutes
@@ -26,10 +29,20 @@ function openCreatePostModal() {
                 console.log('User added to home screen');
             }
         });
-
         // because we cannot use deferredPrompt again
         deferredPrompt = null;
     }
+    // UNREGISTER SERVICE WORKER
+    // if ('serviceWorker' in navigator) {
+    //     navigator.serviceWorker.getRegistrations()
+    //         .then(function (registrations) {
+    //             for (var i = 0; i < registrations.length; i++) {
+    //                 console.log('[feed.js] ... registrations[i] = ', registrations[i]);
+    //                 registrations[i].unregister();
+    //             }
+    //         })
+    // }
+    
 }
 
 function closeCreatePostModal() {
@@ -43,27 +56,27 @@ closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 // Currently not in use, allows us to save assets in cache on demand otherwise
 /*
-function onSaveButtonClicked(event) {
-    // We get the event object because we have an event listener
-    console.log('[feed.js] ... clicked', event);
+ function onSaveButtonClicked(event) {
+ // We get the event object because we have an event listener
+ console.log('[feed.js] ... clicked', event);
 
-    // If 'caches' Object exists in 'window' Object (User's Browser)
-    //  then open/create a cache named 'user-requested'
-    if ('caches' in window) {
-        caches.open('user-requested')
-            .then(function (cache) {
-                // store the assets user wants saved
+ // If 'caches' Object exists in 'window' Object (User's Browser)
+ //  then open/create a cache named 'user-requested'
+ if ('caches' in window) {
+ caches.open('user-requested')
+ .then(function (cache) {
+ // store the assets user wants saved
 
-                // https://httpbin.org/get is the url the request will be sent to
-                // We will store it
-                cache.add('https://httpbin.org/get');
+ // https://httpbin.org/get is the url the request will be sent to
+ // We will store it
+ cache.add('https://httpbin.org/get');
 
-                // Store the image of post
-                cache.add('/src/images/unamed-island.jpg');
-            })
-    }
-}
-*/
+ // Store the image of post
+ cache.add('/src/images/unamed-island.jpg');
+ })
+ }
+ }
+ */
 
 // Helper function to clear cards
 function clearCards() {
@@ -93,7 +106,7 @@ function createCard() {
     cardSupportingText.className = 'mdl-card__supporting-text';
     cardSupportingText.textContent = 'A Girl with Dreams';
     cardSupportingText.style.textAlign = 'center';
-    
+
     // Used for Cache on Demand via Save Button
     // var cardSaveButton = document.createElement('button');
     // cardSaveButton.textContent = 'Save';
@@ -105,7 +118,6 @@ function createCard() {
     componentHandler.upgradeElement(cardWrapper);
     sharedMomentsArea.appendChild(cardWrapper);
 }
-
 
 
 // To reach out to the Network to fetch some data
@@ -157,7 +169,7 @@ fetch(url, {
 // Used with Cache, then Network with Time Comparison and Dynamic Caching
 // Can we access 'caches' Object from the User's Browser (window)?
 if ('caches' in window) {
-   // Can I find the URL I am trying to access in my cache?
+    // Can I find the URL I am trying to access in my cache?
     caches.match(url)
         .then(function (response) {
             // response = null, if not in cache. IF null, do nothing
