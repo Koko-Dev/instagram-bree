@@ -1,14 +1,20 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v79';
-var CACHE_DYNAMIC_NAME = 'dynamic-v77';
+// Import indexedDB to SW
+// importScripts allows us to distribute the idb.js script across multiple files
+// ImportScripts can also be used to make the SW leaner and outsource code into a separate file
+importScripts('/src/js/idb.js');
+
+var CACHE_STATIC_NAME = 'static-v80';
+var CACHE_DYNAMIC_NAME = 'dynamic-v78';
 var STATIC_FILES = [
     '/',
     '/index.html',
     '/offline.html',
     '/src/js/app.js',
     '/src/js/feed.js',
+    '/src/js/idb.js',
     '/src/js/promise.js',
     '/src/js/fetch.js',
     '/src/js/material.min.js',
