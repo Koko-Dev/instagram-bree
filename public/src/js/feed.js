@@ -84,26 +84,28 @@ function clearCards() {
     }
 }
 
-function createCard() {
+function createCard(data) {
     var cardWrapper = document.createElement('div');
     cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
     var cardTitle = document.createElement('div');
     cardTitle.className = 'mdl-card__title';
-    cardTitle.style.backgroundImage = 'url("/src/images/breeGrams-main.jpg")';
+    //cardTitle.style.backgroundImage = 'url("/src/images/breeGrams-main.jpg")';
+    cardTitle.style.backgroundImage = 'url(' + data.image + ')';
     cardTitle.style.backgroundSize = 'cover';
     cardTitle.style.height = '180px';
     //cardTitle.style.fontWeight = 'bold';
     //cardTitle.style.zIndex = 10;
     cardWrapper.appendChild(cardTitle);
     var cardTitleTextElement = document.createElement('h2');
-    cardTitleTextElement.style.color = '#C9BAB1';
-    cardTitleTextElement.style.boxShadow = '3px 5px #D9E0EF';
+    cardTitleTextElement.style.color = '#fff';
+    cardTitleTextElement.style.fontFamily = "'Indie Flower', cursive";
+    cardTitleTextElement.style.boxShadow = '3px 5px #AAA1B6';
     cardTitleTextElement.className = 'mdl-card__title-text';
-    cardTitleTextElement.textContent = 'No Holding Back';
+    cardTitleTextElement.textContent = data.title;
     cardTitle.appendChild(cardTitleTextElement);
     var cardSupportingText = document.createElement('div');
     cardSupportingText.className = 'mdl-card__supporting-text';
-    cardSupportingText.textContent = 'A Girl with Dreams';
+    cardSupportingText.textContent = data.location;
     cardSupportingText.style.textAlign = 'center';
 
     // Used for Cache on Demand via Save Button
@@ -118,51 +120,73 @@ function createCard() {
     sharedMomentsArea.appendChild(cardWrapper);
 }
 
+function updateUI(data) {
+    // Clear the cards to update the UI
+    clearCards();
+    
+    // loop through firebase database
+    for (var i = 0; i < data.length; i++) {
+        createCard(data[i]);
+    }
+    
+}
+
 
 // To reach out to the Network to fetch some data
+// This is just a Dummy Request GET/POST to make sure it is working
 // Used in Cache on Demand
 // Used with Cache, then Network with Time Comparison and Dynamic Caching
 //var url = 'https://httpbin.org/get';
 var networkDataReceived = false;
 
-// For POST request
-var url = 'https://httpbin.org/post';
+// For POST request from firebase, add .json to retarget the right API endpoint
+var url = 'https://breegrams.firebaseio.com/posts.json';
 
-
-// Default is GET request
-// fetch(url)
-//     .then(function (res) {
-//         return res.json();
-//     })
-//     .then(function (data) {
-//         // If networkDataReceived is true then Network is faster
-//         networkDataReceived = true;
-//         console.log('Data from Web: ', data);
-//         // Network faster; clear last card and call the code that updates your page
-//         clearCards();
-//         createCard();
-//     });
-
-// Testing for a POST request instead
-fetch(url, {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    },
-    body: JSON.stringify({
-        message: 'Some extraordinary message'
-    })
-})
+// Default is GET request, also used with firebase POST request
+fetch(url)
     .then(function (res) {
         return res.json();
     })
     .then(function (data) {
+        // If networkDataReceived is true then Network is faster
         networkDataReceived = true;
-        console.log('From web', data);
+        console.log('Data from Web: ', data);
+
+        // Convert data to an Array
+        var dataArray = [];
+        for (var key in data) {
+            // the objects in firebase database called 'posts' with declared properties
+            dataArray.push(data[key]);
+        }
+        // Network faster; clear last card and call the code that updates your page
         clearCards();
-        createCard();
+        //createCard();
+
+        // Update the UI
+        updateUI(dataArray);
     });
+
+// Testing for a POST request instead
+// When switching to firebase POST, go back to GET request code
+// fetch(url, {
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/json',
+//         'Accept': 'application/json'
+//     },
+//     body: JSON.stringify({
+//         message: 'Some extraordinary message'
+//     })
+// })
+//     .then(function (res) {
+//         return res.json();
+//     })
+//     .then(function (data) {
+//         networkDataReceived = true;
+//         console.log('From web', data);
+//         clearCards();
+//         createCard();
+//     });
 
 
 // Used with Cache, then Network with Time Comparison and Dynamic Caching
@@ -183,8 +207,17 @@ if ('caches' in window) {
             // If Network is faster, do not createCard()
             if (!networkDataReceived) {
                 // Cache faster; clear last card and call the code that updates your page
-                clearCards();
-                createCard();
+                // clearCards();
+                // createCard();
+                
+                // Convert data to an Array
+                var dataArray = [];
+                for (var key in data) {
+                    // the objects in firebase database called 'posts' with declared properties
+                    dataArray.push(data[key]);
+                }
+                updateUI(dataArray);
+
             }
         })
 }

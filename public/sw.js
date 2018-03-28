@@ -1,8 +1,8 @@
 // This is a service worker - instagram-bree sw.js
 // Service workers react to specific events, but no DOM access
 
-var CACHE_STATIC_NAME = 'static-v71';
-var CACHE_DYNAMIC_NAME = 'dynamic-v69';
+var CACHE_STATIC_NAME = 'static-v79';
+var CACHE_DYNAMIC_NAME = 'dynamic-v77';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -98,6 +98,59 @@ function isInArray(string, array) {
     return array.indexOf(cachePath) > -1;
 }
 
+// Using Firebase as our Database and Deployment
+self.addEventListener('fetch', function (event) {
+
+    var url = 'https://breegrams.firebaseio.com/posts';
+    if (event.request.url.indexOf(url) > -1) {
+        event.respondWith(
+            caches.open(CACHE_DYNAMIC_NAME)
+                .then(function (cache) {
+                    return fetch(event.request)
+                        .then(function (res) {
+                            // trimCache(CACHE_DYNAMIC_NAME, 3);
+                            cache.put(event.request, res.clone());
+                            return res;
+                        });
+                })
+        );
+    } else if (isInArray(event.request.url, STATIC_FILES)) {
+        event.respondWith(
+            caches.match(event.request)
+        );
+    } else {
+        event.respondWith(
+            caches.match(event.request)
+                .then(function (response) {
+                    if (response) {
+                        return response;
+                    } else {
+                        return fetch(event.request)
+                            .then(function (res) {
+                                return caches.open(CACHE_DYNAMIC_NAME)
+                                    .then(function (cache) {
+                                        // trimCache(CACHE_DYNAMIC_NAME, 3);
+                                        cache.put(event.request.url, res.clone());
+                                        return res;
+                                    })
+                            })
+                            .catch(function (err) {
+                                return caches.open(CACHE_STATIC_NAME)
+                                    .then(function (cache) {
+                                        if (event.request.headers.get('accept').includes('text/html')) {
+                                            return cache.match('/offline.html');
+                                        }
+                                    });
+                            });
+                    }
+                })
+        );
+    }
+});
+
+
+
+
 
 // Non-Life-Cycle Event
 
@@ -161,102 +214,102 @@ function isInArray(string, array) {
 // Another problem is that this is bad for offline first because we never fetch from cache
 // Combining original strategy with Cache then Network with Time Comparison and Dynamic Caching
 //    is called Cache, then Network with Offline Support
-self.addEventListener('fetch', function (event) {
-    var url = 'https://httpbin.org/get';
-    var staticAssets = STATIC_FILES;
-    if (event.request.url.indexOf(url) > -1) {
-        // Cache then Network Strategy with Time Comparison and Dynamic Caching for var url only
-        // But it fails when network is offline because we don't cache.match
-        // This is a good strategy for use cases when we do have internet access and
-        // we want to get something on screen quickly
-        //  because we fetch it from the cache first
-        //  Bad for offline because we don't try to fetch requests from the cache only
-        event.respondWith(
-            // Reaches out to cache first
-            caches.open(CACHE_DYNAMIC_NAME)
-                .then(function (cache) {
-                    // Nonetheless, we make a Network Request
-                    return fetch(event.request)
-                        .then(function (res) {
-                            // Trim Dynamic Cache
-                            //trimCache(CACHE_DYNAMIC_NAME, 10);
-                            
-                            // If it is there, store in the dynamic cache, if not do nothing
-                            // If we don't get it from the cache and can't get it from Network, out of luck
-                            cache.put(event.request, res.clone());
-                            // res is returned so that it reaches feed.js
-                            return res;
-                        });
-                })
-        );
-    } else if (isInArray(event.request.url, STATIC_FILES))  {
-        // Regex exp tests if the event.request.url match any of the words in the .join STATIC_FILES.
-        // if true, then cache-only strategy
-        event.respondWith(
-            caches.match(event.request)
-        );
-    } else {
-        // For all other urls that don't use the Cache, then Network with Time Comp and Dyn Cache Strategy
-        // We will use Cache with Network Fallback Strategy
-        // Drawback is since we fetch from cache first we override updated data with Outdated Data.
-        event.respondWith(
-            caches.match(event.request)
-                .then(function (response) {
-                    // Response from the Cache
-                    if (response) {
-                        // returning the value from the cache
-                        return response;
-                    } else {
-                        // Begin Dynamic Caching -- Cache from Network
-                        // if the key is not in the cache, store in a new cache
-                        return fetch(event.request)
-                        // Response from the Network
-                            .then(function (res) {
-                                // Open a new cache for incoming from Network
-                                return caches.open(CACHE_DYNAMIC_NAME)
-                                    .then(function (cache) {
-                                        // Trim Dynamic Cache
-                                        //trimCache(CACHE_DYNAMIC_NAME, 10);
-
-                                        // Put the new resource in the dynamic cache
-                                        // url-identifier and response (res)
-                                        // can only use response (res) once, so used res.clone() for caching
-                                        // temporarily disable cache.put to test initial Cache on Demand with Save Button
-                                        cache.put(event.request.url, res.clone());
-                                        return res;
-                                    })
-                            })
-                            .catch(function (err) {
-                                // on Network Fetch Response error we turn to our fallback - offline.html
-                                return caches.open(CACHE_STATIC_NAME)
-                                    .then(function (cache) {
-                                        // If event.request.url if from help page, then 
-                                        // get the offline.html file when network is down, if /help not cached
-                                        // if (event.request.url.indexOf('/help')) {
-                                        //     return cache.match('/offline.html');
-                                        // }
-
-                                        // A better way.. 
-                                        // If the 'accept' header includes 'text/html' then return offline.html page
-                                        if (event.request.headers.get('accept').includes('text/html')) {
-                                            console.log('[ServiceWorker Worker] ... Accept: "text/html"', event.request.headers.get('accept'));
-                                            /*The output from:
-                                                        console.log('[ServiceWorker Worker] ... Accept: "text/html"', event.request.headers.get('accept'));
-                                            *       was:
-                                            *           text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*;q=0.8
-                                            *       but you had to use get() to get it.
-                                            *
-                                            *           */
-
-                                            return cache.match('/offline.html');
-                                        }
-                                    });
-                            });
-                    }
-                })
-        );
-    }
-});
+// self.addEventListener('fetch', function (event) {
+//     var url = 'https://httpbin.org/get';
+//     var staticAssets = STATIC_FILES;
+//     if (event.request.url.indexOf(url) > -1) {
+//         // Cache then Network Strategy with Time Comparison and Dynamic Caching for var url only
+//         // But it fails when network is offline because we don't cache.match
+//         // This is a good strategy for use cases when we do have internet access and
+//         // we want to get something on screen quickly
+//         //  because we fetch it from the cache first
+//         //  Bad for offline because we don't try to fetch requests from the cache only
+//         event.respondWith(
+//             // Reaches out to cache first
+//             caches.open(CACHE_DYNAMIC_NAME)
+//                 .then(function (cache) {
+//                     // Nonetheless, we make a Network Request
+//                     return fetch(event.request)
+//                         .then(function (res) {
+//                             // Trim Dynamic Cache
+//                             //trimCache(CACHE_DYNAMIC_NAME, 10);
+//
+//                             // If it is there, store in the dynamic cache, if not do nothing
+//                             // If we don't get it from the cache and can't get it from Network, out of luck
+//                             cache.put(event.request, res.clone());
+//                             // res is returned so that it reaches feed.js
+//                             return res;
+//                         });
+//                 })
+//         );
+//     } else if (isInArray(event.request.url, STATIC_FILES))  {
+//         // Regex exp tests if the event.request.url match any of the words in the .join STATIC_FILES.
+//         // if true, then cache-only strategy
+//         event.respondWith(
+//             caches.match(event.request)
+//         );
+//     } else {
+//         // For all other urls that don't use the Cache, then Network with Time Comp and Dyn Cache Strategy
+//         // We will use Cache with Network Fallback Strategy
+//         // Drawback is since we fetch from cache first we override updated data with Outdated Data.
+//         event.respondWith(
+//             caches.match(event.request)
+//                 .then(function (response) {
+//                     // Response from the Cache
+//                     if (response) {
+//                         // returning the value from the cache
+//                         return response;
+//                     } else {
+//                         // Begin Dynamic Caching -- Cache from Network
+//                         // if the key is not in the cache, store in a new cache
+//                         return fetch(event.request)
+//                         // Response from the Network
+//                             .then(function (res) {
+//                                 // Open a new cache for incoming from Network
+//                                 return caches.open(CACHE_DYNAMIC_NAME)
+//                                     .then(function (cache) {
+//                                         // Trim Dynamic Cache
+//                                         //trimCache(CACHE_DYNAMIC_NAME, 10);
+//
+//                                         // Put the new resource in the dynamic cache
+//                                         // url-identifier and response (res)
+//                                         // can only use response (res) once, so used res.clone() for caching
+//                                         // temporarily disable cache.put to test initial Cache on Demand with Save Button
+//                                         cache.put(event.request.url, res.clone());
+//                                         return res;
+//                                     })
+//                             })
+//                             .catch(function (err) {
+//                                 // on Network Fetch Response error we turn to our fallback - offline.html
+//                                 return caches.open(CACHE_STATIC_NAME)
+//                                     .then(function (cache) {
+//                                         // If event.request.url if from help page, then
+//                                         // get the offline.html file when network is down, if /help not cached
+//                                         // if (event.request.url.indexOf('/help')) {
+//                                         //     return cache.match('/offline.html');
+//                                         // }
+//
+//                                         // A better way..
+//                                         // If the 'accept' header includes 'text/html' then return offline.html page
+//                                         if (event.request.headers.get('accept').includes('text/html')) {
+//                                             console.log('[ServiceWorker Worker] ... Accept: "text/html"', event.request.headers.get('accept'));
+//                                             /*The output from:
+//                                                         console.log('[ServiceWorker Worker] ... Accept: "text/html"', event.request.headers.get('accept'));
+//                                             *       was:
+//                                             *           text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*;q=0.8
+//                                             *       but you had to use get() to get it.
+//                                             *
+//                                             *           */
+//
+//                                             return cache.match('/offline.html');
+//                                         }
+//                                     });
+//                             });
+//                     }
+//                 })
+//         );
+//     }
+// });
 
 // Cache, then Network
 // Gets asset as quickly as possible from the Cache and then also try to fetch update from the Network
