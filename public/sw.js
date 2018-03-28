@@ -26,6 +26,16 @@ var STATIC_FILES = [
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
 
+// Open an indexedDB database and create an ObjectStore
+var dbPromise = idb.open('posts-store', 1, function (db) {
+
+    // Ensure there is no other objectStore with same name
+    if (!db.objectStoreNames.contains('posts')) {
+        db.createObjectStore('posts', {keyPath: 'id'});
+    }
+});
+
+
 // Removes oldest assets of cache recursively until the amount of assets are less than maxItems allowed
 // function trimCache(cacheName, maxItems) {
 //     caches.open(cacheName)
