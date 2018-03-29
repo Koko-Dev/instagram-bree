@@ -8,10 +8,9 @@ var sharedMomentsArea = document.querySelector('#shared-moments');
 function openCreatePostModal() {
     createPostArea.style.display = 'block';
 
-     // App Install Banner                                                                                                  \
-    // Check to see if var deferredPrompt from app.js is set
-    // This will only work IFF Chrome tried to set the prompt first according to their criteria
-    //    which is when user visits app the second time after five minutes
+    // App Install Banner
+    //    \ Check to see if var deferredPrompt from app.js is set This will only work IFF Chrome tried to set the
+    // prompt first according to their criteria which is when user visits app the second time after five minutes
     if (deferredPrompt) {
         // show banner to add icon to home screen
         // remember that deferredPrompt = event, and even returns BeforeInstallPromptEvent
@@ -53,29 +52,17 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
 
-// Currently not in use, allows us to save assets in cache on demand otherwise
-/*
- function onSaveButtonClicked(event) {
- // We get the event object because we have an event listener
- console.log('[feed.js] ... clicked', event);
-
- // If 'caches' Object exists in 'window' Object (User's Browser)
- //  then open/create a cache named 'user-requested'
- if ('caches' in window) {
- caches.open('user-requested')
- .then(function (cache) {
- // store the assets user wants saved
-
- // https://httpbin.org/get is the url the request will be sent to
- // We will store it
- cache.add('https://httpbin.org/get');
-
- // Store the image of post
- cache.add('/src/images/unamed-island.jpg');
- })
- }
- }
- */
+// Currently not in use, allows to save assets in cache on demand otherwise
+function onSaveButtonClicked(event) {
+    console.log('clicked');
+    if ('caches' in window) {
+        caches.open('user-requested')
+            .then(function(cache) {
+                cache.add('https://httpbin.org/get');
+                cache.add('/src/images/sf-boat.jpg');
+            });
+    }
+}
 
 // Helper function to clear cards
 function clearCards() {
@@ -121,50 +108,38 @@ function createCard(data) {
 }
 
 function updateUI(data) {
-    // Clear the cards to update the UI
     clearCards();
-    
-    // loop through firebase database
     for (var i = 0; i < data.length; i++) {
         createCard(data[i]);
     }
-    
 }
 
-
-// To reach out to the Network to fetch some data
-// This is just a Dummy Request GET/POST to make sure it is working
-// Used in Cache on Demand
-// Used with Cache, then Network with Time Comparison and Dynamic Caching
-//var url = 'https://httpbin.org/get';
+var url = 'https://breegrams.firebaseio.com/posts.json';
 var networkDataReceived = false;
 
-// For POST request from firebase, add .json to retarget the right API endpoint
-var url = 'https://breegrams.firebaseio.com/posts.json';
-
-// Default is GET request, also used with firebase POST request
 fetch(url)
-    .then(function (res) {
+    .then(function(res) {
         return res.json();
     })
-    .then(function (data) {
-        // If networkDataReceived is true then Network is faster
+    .then(function(data) {
         networkDataReceived = true;
-        console.log('Data from Web: ', data);
-
-        // Convert data to an Array
+        console.log('From web', data);
         var dataArray = [];
         for (var key in data) {
-            // the objects in firebase database called 'posts' with declared properties
             dataArray.push(data[key]);
         }
-        // Network faster; clear last card and call the code that updates your page
-        clearCards();
-        //createCard();
-
-        // Update the UI
         updateUI(dataArray);
     });
+
+if ('indexedDB' in window) {
+    readAllData('posts')
+        .then(function(data) {
+            if (!networkDataReceived) {
+                console.log('From cache', data);
+                updateUI(data);
+            }
+        });
+}
 
 // Testing for a POST request instead
 // When switching to firebase POST, go back to GET request code
@@ -191,34 +166,35 @@ fetch(url)
 
 // Used with Cache, then Network with Time Comparison and Dynamic Caching
 // Can we access 'caches' Object from the User's Browser (window)?
-if ('caches' in window) {
-    // Can I find the URL I am trying to access in my cache?
-    caches.match(url)
-        .then(function (response) {
-            // response = null, if not in cache. IF null, do nothing
-            if (response) {
-                return response.json();
-            }
-        })
-        .then(function (data) {
-            // if the URL is found in the cache
-            console.log('Data from Cache:  ', data);
-
-            // If Network is faster, do not createCard()
-            if (!networkDataReceived) {
-                // Cache faster; clear last card and call the code that updates your page
-                // clearCards();
-                // createCard();
-                
-                // Convert data to an Array
-                var dataArray = [];
-                for (var key in data) {
-                    // the objects in firebase database called 'posts' with declared properties
-                    dataArray.push(data[key]);
-                }
-                updateUI(dataArray);
-
-            }
-        })
-}
+// if ('caches' in window) {
+//     // Can I find the URL I am trying to access in my cache?
+//     caches.match(url)
+//         .then(function (response) {
+//             // response = null, if not in cache. IF null, do nothing
+//             if (response) {
+//                 return response.json();
+//             }
+//         })
+//         .then(function (data) {
+//             // if the URL is found in the cache
+//             console.log('Data from Cache:  ', data);
+//
+//             // If Network is faster, do not createCard()
+//             if (!networkDataReceived) {
+//                 // Cache faster; clear last card and call the code that updates your page
+//                 // clearCards();
+//                 // createCard();
+//
+//                 // Using Firebase just to populate indexedDB
+//                 // Convert data to an Array
+//                 var dataArray = [];
+//                 for (var key in data) {
+//                     // the objects in firebase database called 'posts' with declared properties
+//                     dataArray.push(data[key]);
+//                 }
+//                 updateUI(dataArray);
+//
+//             }
+//         })
+// }
 

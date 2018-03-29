@@ -5,9 +5,10 @@
 // importScripts allows us to distribute the idb.js script across multiple files
 // ImportScripts can also be used to make the SW leaner and outsource code into a separate file
 importScripts('/src/js/idb.js');
+importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v80';
-var CACHE_DYNAMIC_NAME = 'dynamic-v78';
+var CACHE_STATIC_NAME = 'static-v86';
+var CACHE_DYNAMIC_NAME = 'dynamic-v84';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -15,6 +16,7 @@ var STATIC_FILES = [
     '/src/js/app.js',
     '/src/js/feed.js',
     '/src/js/idb.js',
+    '/src/js/utility.js',
     '/src/js/promise.js',
     '/src/js/fetch.js',
     '/src/js/material.min.js',
@@ -131,14 +133,7 @@ self.addEventListener('fetch', function (event) {
                         .then(function (data) {
                             for (var key in data) {
                                 // store in indexedDB database
-                                dbPromise
-                                    .then(function (db) {
-                                        // create transaction
-                                        var tx = db.transaction('posts', 'readwrite');
-                                        var store = tx.objectStore('posts');
-                                        store.put(data[key]);
-                                        return tx.complete;
-                                    })
+                                writeData('posts', data[key]);
                             }
                         });
                     return res;
