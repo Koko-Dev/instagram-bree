@@ -7,8 +7,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v87';
-var CACHE_DYNAMIC_NAME = 'dynamic-v85';
+var CACHE_STATIC_NAME = 'static-v89';
+var CACHE_DYNAMIC_NAME = 'dynamic-v86';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -128,8 +128,11 @@ self.addEventListener('fetch', function (event) {
             fetch(event.request)
                 .then(function (res) {
                     var clonedRes = res.clone();
-                    // store transformed cloned response
-                    clonedRes.json()
+                    clearAllData('posts')
+                        .then(function () {
+                            // store transformed cloned response
+                            return clonedRes.json()
+                        })
                         .then(function (data) {
                             for (var key in data) {
                                 // store in indexedDB database
