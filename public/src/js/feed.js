@@ -86,7 +86,7 @@ function createCard(data) {
     var cardTitleTextElement = document.createElement('h2');
     cardTitleTextElement.style.color = '#fff';
     cardTitleTextElement.style.fontFamily = "'Indie Flower', cursive";
-    cardTitleTextElement.style.boxShadow = '3px 5px #AAA1B6';
+    //cardTitleTextElement.style.boxShadow = '3px 5px #AAA1B6';
     cardTitleTextElement.className = 'mdl-card__title-text';
     cardTitleTextElement.textContent = data.title;
     cardTitle.appendChild(cardTitleTextElement);
