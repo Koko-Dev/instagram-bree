@@ -26,11 +26,13 @@ var STATIC_FILES = [
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
 
-// Open an indexedDB database and create an ObjectStore
+// Open an indexedDB database  called 'posts-store'
 var dbPromise = idb.open('posts-store', 1, function (db) {
 
-    // Ensure there is no other objectStore with same name
+    // Ensure there is no other objectStore with the name 'posts'
     if (!db.objectStoreNames.contains('posts')) {
+        // Create an Object Store called 'posts' in the 'posts-store' IndexedDB Database
+        //   with a keyPath called 'id'
         db.createObjectStore('posts', {keyPath: 'id'});
     }
 });
@@ -99,6 +101,7 @@ self.addEventListener('activate', function (event) {
 
 // Improved Helper function to test if URL from STATIC_FILES is being called
 // The one above would not catch '/',  '/index.html', etc.
+
 function isInArray(string, array) {
     var cachePath;
 
@@ -120,14 +123,25 @@ self.addEventListener('fetch', function (event) {
     var url = 'https://breegrams.firebaseio.com/posts';
     if (event.request.url.indexOf(url) > -1) {
         event.respondWith(
-            caches.open(CACHE_DYNAMIC_NAME)
-                .then(function (cache) {
-                    return fetch(event.request)
-                        .then(function (res) {
-                            // trimCache(CACHE_DYNAMIC_NAME, 3);
-                            cache.put(event.request, res.clone());
-                            return res;
+            fetch(event.request)
+                .then(function (res) {
+                    var clonedRes = res.clone();
+                    // store transformed cloned response
+                    clonedRes.json()
+                        .then(function (data) {
+                            for (var key in data) {
+                                // store in indexedDB database
+                                dbPromise
+                                    .then(function (db) {
+                                        // create transaction
+                                        var tx = db.transaction('posts', 'readwrite');
+                                        var store = tx.objectStore('posts');
+                                        store.put(data[key]);
+                                        return tx.complete;
+                                    })
+                            }
                         });
+                    return res;
                 })
         );
     } else if (isInArray(event.request.url, STATIC_FILES)) {
