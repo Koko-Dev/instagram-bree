@@ -32,4 +32,6 @@
 
 .shared-moment-card.mdl-card {
   margin: 10px auto;
+  /*Override mdl default width*/
+  width: 400px;
 }
