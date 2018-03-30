@@ -92,6 +92,7 @@ function createCard(data) {
     cardTitle.appendChild(cardTitleTextElement);
     var cardSupportingText = document.createElement('div');
     cardSupportingText.className = 'mdl-card__supporting-text';
+    //console.log('[FEED.JS:  ..  DATA.LOCATION: ', data.location);
     cardSupportingText.textContent = data.location;
     cardSupportingText.style.textAlign = 'center';
 
