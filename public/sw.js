@@ -7,8 +7,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v89';
-var CACHE_DYNAMIC_NAME = 'dynamic-v86';
+var CACHE_STATIC_NAME = 'static-v91';
+var CACHE_DYNAMIC_NAME = 'dynamic-v88';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -136,7 +136,13 @@ self.addEventListener('fetch', function (event) {
                         .then(function (data) {
                             for (var key in data) {
                                 // store in indexedDB database
-                                writeData('posts', data[key]);
+                                writeData('posts', data[key])
+                                // FOR TEST ONLY-- delete item directly after it is written
+                                //     .then(function () {
+                                //         deleteItemFromData('posts', key);
+                                //     })
+
+
                             }
                         });
                     return res;
