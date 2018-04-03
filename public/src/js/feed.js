@@ -79,6 +79,7 @@ function createCard(data) {
     //cardTitle.style.backgroundImage = 'url("/src/images/breeGrams-main.jpg")';
     cardTitle.style.backgroundImage = 'url(' + data.image + ')';
     cardTitle.style.backgroundSize = 'cover';
+    // Set height on feed.css for mobile first approach
     cardTitle.style.height = '180px';
     //cardTitle.style.fontWeight = 'bold';
     //cardTitle.style.zIndex = 10;
@@ -86,13 +87,11 @@ function createCard(data) {
     var cardTitleTextElement = document.createElement('h2');
     cardTitleTextElement.style.color = '#fff';
     cardTitleTextElement.style.fontFamily = "'Indie Flower', cursive";
-    //cardTitleTextElement.style.boxShadow = '3px 5px #AAA1B6';
     cardTitleTextElement.className = 'mdl-card__title-text';
     cardTitleTextElement.textContent = data.title;
     cardTitle.appendChild(cardTitleTextElement);
     var cardSupportingText = document.createElement('div');
     cardSupportingText.className = 'mdl-card__supporting-text';
-    //console.log('[FEED.JS:  ..  DATA.LOCATION: ', data.location);
     cardSupportingText.textContent = data.location;
     cardSupportingText.style.textAlign = 'center';
 

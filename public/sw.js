@@ -7,8 +7,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v99';
-var CACHE_DYNAMIC_NAME = 'dynamic-v90';
+var CACHE_STATIC_NAME = 'static-v104';
+var CACHE_DYNAMIC_NAME = 'dynamic-v95';
 var STATIC_FILES = [
     '/',
     '/index.html',
