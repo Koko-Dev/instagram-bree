@@ -35,13 +35,11 @@
   width: 380px;
 }
 
-
 @media (min-width:1761px) and (max-width: 2060px) {
     .shared-moment-card.mdl-card {
         width: 35%;
     }
 }
-
 
 @media (min-width:1601px) and (max-width: 1760px) {
     .shared-moment-card.mdl-card {
@@ -60,8 +58,6 @@
         width: 48%;
     }
 }
-
-
 
 @media (min-width:960px) and (max-width: 1024px) {
     .shared-moment-card.mdl-card {
@@ -119,5 +115,4 @@
     .shared-moment-card .mdl-card__title {
         height: 240px;
     }
-    
 }
