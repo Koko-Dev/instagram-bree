@@ -36,6 +36,33 @@
 }
 
 
+@media (min-width:1761px) and (max-width: 2060px) {
+    .shared-moment-card.mdl-card {
+        width: 35%;
+    }
+}
+
+
+@media (min-width:1601px) and (max-width: 1760px) {
+    .shared-moment-card.mdl-card {
+        width: 40%;
+    }
+}
+
+@media (min-width:1301px) and (max-width: 1600px) {
+    .shared-moment-card.mdl-card {
+        width: 45%;
+    }
+}
+
+@media (min-width:1025px) and (max-width: 1300px) {
+    .shared-moment-card.mdl-card {
+        width: 48%;
+    }
+}
+
+
+
 @media (min-width:960px) and (max-width: 1024px) {
     .shared-moment-card.mdl-card {
         width: 50%;
@@ -82,9 +109,15 @@
     height: 150px;
 }
 
-
 @media (min-height:600px) {
     .shared-moment-card .mdl-card__title {
         height: 180px;
     }
+}
+
+@media (min-height: 1000px) {
+    .shared-moment-card .mdl-card__title {
+        height: 240px;
+    }
+    
 }
