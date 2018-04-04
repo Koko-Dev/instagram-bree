@@ -35,74 +35,56 @@
   width: 380px;
 }
 
-@media (min-width:960px) and (max-width: 1024px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 45%;
-  }
-}
-
-@media (min-width:801px) and (max-width: 959px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 45%;
-  }
-}
-
 
 @media (min-width:960px) and (max-width: 1024px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 50%;
-  }
+    .shared-moment-card.mdl-card {
+        width: 50%;
+    }
 }
 
 @media  (min-width:801px) and (max-width: 959px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 55%;
-  }
+    .shared-moment-card.mdl-card {
+        width: 55%;
+    }
 }
 
 @media (min-width:769px) and (max-width: 800px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 60%;
-  }
+    .shared-moment-card.mdl-card {
+        width: 60%;
+    }
 }
 
 @media (min-width:569px) and (max-width: 768px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 70%;
-  }
+    .shared-moment-card.mdl-card {
+        width: 70%;
+    }
 }
 
 @media (min-width:481px) and (max-width: 568px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 75%;
-  }
+    .shared-moment-card.mdl-card {
+        width: 75%;
+    }
 }
 
 @media (min-width:321px) and (max-width: 480px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 100%;
-  }
+    .shared-moment-card.mdl-card {
+        width: 100%;
+    }
 }
 
 @media (min-width:0px) and (max-width: 320px) {
-  /* put your css styles in here */
-  .shared-moment-card.mdl-card {
-    width: 100%;
-  }
+    .shared-moment-card.mdl-card {
+        width: 100%;
+    }
 }
 
-/*@media (min-height: 800px) and (max-height: ) {
-  
-}*/
+.shared-moment-card .mdl-card__title {
+    height: 150px;
+}
 
 
-
-
+@media (min-height:600px) {
+    .shared-moment-card .mdl-card__title {
+        height: 180px;
+    }
+}

@@ -76,13 +76,8 @@ function createCard(data) {
     cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
     var cardTitle = document.createElement('div');
     cardTitle.className = 'mdl-card__title';
-    //cardTitle.style.backgroundImage = 'url("/src/images/breeGrams-main.jpg")';
     cardTitle.style.backgroundImage = 'url(' + data.image + ')';
     cardTitle.style.backgroundSize = 'cover';
-    // Set height on feed.css for mobile first approach
-    cardTitle.style.height = '180px';
-    //cardTitle.style.fontWeight = 'bold';
-    //cardTitle.style.zIndex = 10;
     cardWrapper.appendChild(cardTitle);
     var cardTitleTextElement = document.createElement('h2');
     cardTitleTextElement.style.color = '#fff';
