@@ -1,101 +1,110 @@
 #create-post {
-  z-index: 1001;
-  position: fixed;
-  width: 100%;
-  min-height: 100vh;
-  overflow-y: scroll;
-  bottom: 0;
-  top: 56px;
-  background: white;
-  text-align: center;
-  display: none;
+    z-index: 1001;
+    position: fixed;
+    width: 100%;
+    min-height: 100vh;
+    overflow-y: scroll;
+    bottom: 0;
+    top: 56px;
+    background: white;
+    text-align: center;
+    
+    /* This hides the Post page until plus sign button is clicked (on feed.js openCreatePostModal()) */
+    display: none;
+    
+    /* Animate with vh = view height;  Can also use 100%, but need to set all <main> on index.html to 100%
+       The view height slides the entire Posting page all the way down and out of sight at 100vh */
+    transition-property: all;
+    transition-duration: 1s;
+    transition-timing-function: cubic-bezier(0, 1, 0.5, 1);
+    transform: translateY(100vh);
 }
 
 .main-image {
-  max-width: 100%;
-  margin: auto;
-  display: block;
+    max-width: 100%;
+    margin: auto;
+    display: block;
 }
 
 .floating-button {
-  z-index: 1000;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  padding: 30px;
+    z-index: 1000;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 30px;
 }
 
 .input-section {
-  display: block;
-  margin: 10px auto;
+    display: block;
+    margin: 10px auto;
 }
 
 .shared-moment-card.mdl-card {
-  margin: 10px auto;
-  width: 380px;
+    margin: 10px auto;
+    width: 380px;
 }
 
-@media (min-width:1761px) and (max-width: 2060px) {
+@media (min-width: 1761px) and (max-width: 2060px) {
     .shared-moment-card.mdl-card {
         width: 35%;
     }
 }
 
-@media (min-width:1601px) and (max-width: 1760px) {
+@media (min-width: 1601px) and (max-width: 1760px) {
     .shared-moment-card.mdl-card {
         width: 40%;
     }
 }
 
-@media (min-width:1301px) and (max-width: 1600px) {
+@media (min-width: 1301px) and (max-width: 1600px) {
     .shared-moment-card.mdl-card {
         width: 45%;
     }
 }
 
-@media (min-width:1025px) and (max-width: 1300px) {
+@media (min-width: 1025px) and (max-width: 1300px) {
     .shared-moment-card.mdl-card {
         width: 48%;
     }
 }
 
-@media (min-width:960px) and (max-width: 1024px) {
+@media (min-width: 960px) and (max-width: 1024px) {
     .shared-moment-card.mdl-card {
         width: 50%;
     }
 }
 
-@media  (min-width:801px) and (max-width: 959px) {
+@media (min-width: 801px) and (max-width: 959px) {
     .shared-moment-card.mdl-card {
         width: 55%;
     }
 }
 
-@media (min-width:769px) and (max-width: 800px) {
+@media (min-width: 769px) and (max-width: 800px) {
     .shared-moment-card.mdl-card {
         width: 60%;
     }
 }
 
-@media (min-width:569px) and (max-width: 768px) {
+@media (min-width: 569px) and (max-width: 768px) {
     .shared-moment-card.mdl-card {
         width: 70%;
     }
 }
 
-@media (min-width:481px) and (max-width: 568px) {
+@media (min-width: 481px) and (max-width: 568px) {
     .shared-moment-card.mdl-card {
         width: 75%;
     }
 }
 
-@media (min-width:321px) and (max-width: 480px) {
+@media (min-width: 321px) and (max-width: 480px) {
     .shared-moment-card.mdl-card {
         width: 100%;
     }
 }
 
-@media (min-width:0px) and (max-width: 320px) {
+@media (min-width: 0px) and (max-width: 320px) {
     .shared-moment-card.mdl-card {
         width: 100%;
     }
@@ -105,7 +114,7 @@
     height: 150px;
 }
 
-@media (min-height:600px) {
+@media (min-height: 600px) {
     .shared-moment-card .mdl-card__title {
         height: 180px;
     }

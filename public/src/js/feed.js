@@ -4,9 +4,16 @@ var closeCreatePostModalButton = document.querySelector('#close-create-post-moda
 var sharedMomentsArea = document.querySelector('#shared-moments');
 
 
-// click listener
+// click listener  (the big plus sign on main page)
 function openCreatePostModal() {
+    // "Un-hide" the form
     createPostArea.style.display = 'block';
+
+    // change the transform property from 100vh on feed.css to 0 so that it will slide up all the way
+    // We need a workaround to get it not to display block and translateY in one step
+    setTimeout(function () {
+        createPostArea.style.transform = 'translateY(0vh)';
+    }, 20);
 
     // App Install Banner
     //    \ Check to see if var deferredPrompt from app.js is set This will only work IFF Chrome tried to set the
@@ -44,20 +51,23 @@ function openCreatePostModal() {
 }
 
 function closeCreatePostModal() {
-    createPostArea.style.display = 'none';
+    createPostArea.style.transform = 'translateY(100vh)';
+    createPostArea.style.transitionProperty = 'all';
+    createPostArea.style.transitionDuration = '1s';
+    createPostArea.style.transitionTimingFunction = 'cubic-bezier(0, 1, 0.5, 1)';
+    //createPostArea.style.display = 'none';
 }
 
 shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
-
 // Currently not in use, allows to save assets in cache on demand otherwise
 function onSaveButtonClicked(event) {
     console.log('clicked');
     if ('caches' in window) {
         caches.open('user-requested')
-            .then(function(cache) {
+            .then(function (cache) {
                 cache.add('https://httpbin.org/get');
                 cache.add('/src/images/sf-boat.jpg');
             });
@@ -113,10 +123,10 @@ var url = 'https://breegrams.firebaseio.com/posts.json';
 var networkDataReceived = false;
 
 fetch(url)
-    .then(function(res) {
+    .then(function (res) {
         return res.json();
     })
-    .then(function(data) {
+    .then(function (data) {
         networkDataReceived = true;
         console.log('From web', data);
         var dataArray = [];
@@ -128,7 +138,7 @@ fetch(url)
 
 if ('indexedDB' in window) {
     readAllData('posts')
-        .then(function(data) {
+        .then(function (data) {
             if (!networkDataReceived) {
                 console.log('From cache', data);
                 updateUI(data);
