@@ -44,6 +44,7 @@
     width: 380px;
 }
 
+
 @media (min-width: 1761px) and (max-width: 2060px) {
     .shared-moment-card.mdl-card {
         width: 35%;
@@ -52,17 +53,30 @@
 
 @media (min-width: 1601px) and (max-width: 1760px) {
     .shared-moment-card.mdl-card {
-        width: 40%;
+        width: 39%;
     }
 }
 
 @media (min-width: 1301px) and (max-width: 1600px) {
     .shared-moment-card.mdl-card {
+        width: 39%;
+    }
+}
+
+@media (min-width: 1201px) and (max-width: 1300) {
+    .shared-moment-card.mdl-card {
         width: 45%;
     }
 }
 
-@media (min-width: 1025px) and (max-width: 1300px) {
+
+@media (min-width: 1101px) and (max-width: 1200px) {
+    .shared-moment-card.mdl-card {
+        width: 45%;
+    }
+}
+
+@media (min-width: 1025px) and (max-width: 1100px) {
     .shared-moment-card.mdl-card {
         width: 48%;
     }

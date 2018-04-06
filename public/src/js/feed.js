@@ -122,6 +122,7 @@ function updateUI(data) {
     }
 }
 
+// Using Firebase as Backend == Getting images stored in breegrams database on Firebase using GET request
 var url = 'https://breegrams.firebaseio.com/posts.json';
 var networkDataReceived = false;
 
@@ -206,6 +207,31 @@ if ('indexedDB' in window) {
 //         })
 // }
 
+// Helper function is a POST request
+// Used if the User's Browser does not accept Service Worker and Background Synchronization (syncManager)
+// Directly sends data (POST request) to the Backend (Firebase) without using the Synchronization Event
+function sendData () {
+    fetch('https://breegrams.firebaseio.com/posts.json', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            id: new Date().toISOString(),
+            title: titleInput.value,
+            location: locationInput.value,
+            image: 'https://firebasestorage.googleapis.com/v0/b/breegrams.appspot.com/o/breeGrams-main.jpg?alt=media&token=6655d0ed-3a0c-4d18-bec7-fb782c81973e'
+        })
+    })
+        .then(function (res) {
+            console.log('sendData() response:  ', res.clone().json());
+
+            // rebuild the data once the data has been sent (because now we can fetch updated data from the backend
+            updateUI(res)
+        })
+}
+
 // Register an event listener to the form
 form.addEventListener('submit', function (event) {
     // prevent the default so that the page does not get loaded onsubmit
@@ -255,9 +281,13 @@ form.addEventListener('submit', function (event) {
                     })
                     .catch(function (err) {
                         console.log('There was an error with background syncing: ', err);
-
-                    })
-            })
+                    });
+            });
+    } else {
+        // If the User's Browser does not allow for Service Workers and SyncManager
+        // We create a Fallback method sendData()
+        sendData();
+        
     }
     
 });
