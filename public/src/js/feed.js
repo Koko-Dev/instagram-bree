@@ -102,6 +102,9 @@ function createCard(data) {
     cardSupportingText.className = 'mdl-card__supporting-text';
     cardSupportingText.textContent = data.location;
     cardSupportingText.style.textAlign = 'center';
+    cardSupportingText.style.fontFamily = "'Yeon Sung', cursive";
+    cardSupportingText.style.color = '#4D5959';
+    cardSupportingText.style.fontSize = '2em';
 
     // Used for Cache on Demand via Save Button
     // var cardSaveButton = document.createElement('button');

@@ -69,7 +69,7 @@
     }
 }
 
-@media (min-width: 1201px) and (max-width: 1300) {
+@media (min-width: 1201px) and (max-width: 1300px) {
     .shared-moment-card.mdl-card {
         width: 45%;
     }
