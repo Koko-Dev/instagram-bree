@@ -100,6 +100,9 @@
       </nav>
     </div>
     <main class="mdl-layout__content mat-typography">
+	    <!--The modal to fetch user input -- (the big plus sign on the main feed)
+	        We want to post the Title and Location to the Server.-->
+	    
       <div id="create-post">
         <form>
           <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -121,6 +124,8 @@
           </div>
           <br>
           <div>
+	          <!--Connect this button to JS so that we can do something about it
+	              Since type="submit", we can add a "submit" listener on the feed.js-->
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent"
                     type="submit"
                     id="post-btn">Post!

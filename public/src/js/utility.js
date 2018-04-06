@@ -1,7 +1,15 @@
 
+
+
 var dbPromise = idb.open('posts-store', 1, function (db) {
+    // Cache Posts we fetch from the Server stored in indexedDB 'posts-store'
     if (!db.objectStoreNames.contains('posts')) {
         db.createObjectStore('posts', {keyPath: 'id'});
+    }
+    // For background synchronization tasks, to store data in our sync queue
+    // Stores all the posts I want to synchronize  (used in feed.js)
+    if (!db.objectStoreNames.contains('sync-posts')) {
+        db.createObjectStore('sync-posts', {keyPath: 'id'});
     }
 });
 

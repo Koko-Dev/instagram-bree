@@ -2,6 +2,9 @@ var shareImageButton = document.querySelector('#share-image-button');
 var createPostArea = document.querySelector('#create-post');
 var closeCreatePostModalButton = document.querySelector('#close-create-post-modal-btn');
 var sharedMomentsArea = document.querySelector('#shared-moments');
+var form = document.querySelector('form');
+var titleInput = document.querySelector('#title');
+var locationInput = document.querySelector('#location');
 
 
 // click listener  (the big plus sign on main page)
@@ -202,4 +205,48 @@ if ('indexedDB' in window) {
 //             }
 //         })
 // }
+
+// Register an event listener to the form
+form.addEventListener('submit', function (event) {
+    // prevent the default so that the page does not get loaded onsubmit
+    // because the default of the submit event is to send data to the server
+    event.preventDefault();
+
+    // Check to see if we have data in the form
+    // link to id='title' and id='location' on form in index.html
+    // trim( ) removes whitespace from both sides of a string
+    if (titleInput.value.trim() === '' || locationInput.value.trim() === ''){
+        console.log('Title or Location is BLANK', titleInput.value, locationInput.value);
+        alert('Please enter Title and Location');
+        return;
+    }
+    closeCreatePostModal();
+
+    // Background Synchronization Request
+    if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        // Make sure SW is installed, activated, and ready to take some input
+        // if SW is ready, returns the promise of the SW
+        navigator.serviceWorker.ready
+            .then(function (sw) {
+                var post = {
+                    id: new Date().toISOString() ,
+                    title: titleInput.value,
+                    locationInput: locationInput.value
+                };
+                writeData('sync-posts', post)
+                    .then(function () {
+                        // REGISTER THE SYNCHRONIZATION TASK
+                        // sw.sync gives us access to the SyncManager now from the SWs point of view
+                        // Register our single submit event with it
+                        // register() allows us to register a synchronization task with the SW
+                        // the sync string is an id that clearly ids a given sync task
+                        // the sync id is used in the SW to react to reestablish connectivity
+                        // It is also used to check which tasks we have left and what we need to do with the task
+                        sw.sync.register('sync-new-post');
+
+                    })
+            })
+    }
+    
+});
 
