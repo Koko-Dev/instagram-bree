@@ -233,7 +233,7 @@ form.addEventListener('submit', function (event) {
                     title: titleInput.value,
                     locationInput: locationInput.value
                 };
-                writeData('sync-posts', post)
+                writeData('syncposts', post)
                     .then(function () {
                         // REGISTER THE SYNCHRONIZATION TASK
                         // sw.sync gives us access to the SyncManager now from the SWs point of view
@@ -242,7 +242,19 @@ form.addEventListener('submit', function (event) {
                         // the sync string is an id that clearly ids a given sync task
                         // the sync id is used in the SW to react to reestablish connectivity
                         // It is also used to check which tasks we have left and what we need to do with the task
-                        sw.sync.register('sync-new-post');
+                        return sw.sync.register('sync-new-post')
+                    })
+                    .then(function () {
+                        // Access Material Design Lite's Snackbar Container -- A User Notification Feature
+                        var snackbarContainer =  document.querySelector('#confirmation-toast');
+                        var data = {message: 'Your Post was synced successfully!'};
+
+                        // Properties provided by Material Design Lite
+                        // This will provide a visual feedback to the User with the above message
+                        snackbarContainer.MaterialSnackbar.showSnackbar(data);
+                    })
+                    .catch(function (err) {
+                        console.log('There was an error with background syncing: ', err);
 
                     })
             })

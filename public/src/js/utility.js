@@ -8,8 +8,8 @@ var dbPromise = idb.open('posts-store', 1, function (db) {
     }
     // For background synchronization tasks, to store data in our sync queue
     // Stores all the posts I want to synchronize  (used in feed.js)
-    if (!db.objectStoreNames.contains('sync-posts')) {
-        db.createObjectStore('sync-posts', {keyPath: 'id'});
+    if (!db.objectStoreNames.contains('syncposts')) {
+        db.createObjectStore('syncposts', {keyPath: 'id'});
     }
 });
 
