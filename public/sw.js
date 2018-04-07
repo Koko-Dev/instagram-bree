@@ -7,8 +7,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v122';
-var CACHE_DYNAMIC_NAME = 'dynamic-v113';
+var CACHE_STATIC_NAME = 'static-v124';
+var CACHE_DYNAMIC_NAME = 'dynamic-v115';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -55,7 +55,6 @@ var dbPromise = idb.open('posts-store', 1, function (db) {
 //                 })
 //         })
 // }
-
 
 
 self.addEventListener('install', function (event) {
@@ -141,8 +140,6 @@ self.addEventListener('fetch', function (event) {
                                 //     .then(function () {
                                 //         deleteItemFromData('posts', key);
                                 //     })
-
-
                             }
                         });
                     return res;
@@ -181,9 +178,6 @@ self.addEventListener('fetch', function (event) {
         );
     }
 });
-
-
-
 
 
 // Non-Life-Cycle Event
@@ -248,6 +242,7 @@ self.addEventListener('fetch', function (event) {
 // Another problem is that this is bad for offline first because we never fetch from cache
 // Combining original strategy with Cache then Network with Time Comparison and Dynamic Caching
 //    is called Cache, then Network with Offline Support
+
 // self.addEventListener('fetch', function (event) {
 //     var url = 'https://httpbin.org/get';
 //     var staticAssets = STATIC_FILES;
@@ -398,3 +393,47 @@ self.addEventListener('fetch', function (event) {
 //         fetch(event.request)
 //     )
 // });
+
+// Fires when the SW notes it has connectivity and an outstanding Synchronization Task
+self.addEventListener('sync', function (event) {
+    // At this point we know we have connectivity so we send the request to the server
+    console.log('[Servcie Worker]... Background Synchronization', event);
+    console.log('[Service Worker] ..  the event.tag property -- ', event.tag);
+    if (event.tag === 'sync-new-post') {
+        console.log('[Service Worker] ... Synchronization Task tag === "sync-new-post" has been verified');
+        event.waitUntil(
+            readAllData('syncposts')
+                .then(function (data) {
+                    // Send the data to the server
+                    // Since User may have posted more than once while offline, we loop through data stored in indexedDB
+                    for (var post of data) {
+                        fetch('https://breegrams.firebaseio.com/posts.json', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                id: post.id,
+                                title: post.title,
+                                location: post.location,
+                                image: 'https://firebasestorage.googleapis.com/v0/b/breegrams.appspot.com/o/breeGrams-main.jpg?alt=media&token=6655d0ed-3a0c-4d18-bec7-fb782c81973e'
+                            })
+                        })
+                            .then(function (res) {
+                                console.log('[Service Worker] ... Post response:  ', res)
+                                // Clean up 'syncposts' Object Store in IndexedDB after each post is handled
+                                // Use our deleteItemFromData() method in utility.js to delete each post from indexedDB
+                                if (res.ok) {
+                                    deleteItemFromData('syncposts', post.id);
+                                }
+                            })
+                            .catch(function (err) {
+                                // If the response in not ok, we do not delete it
+                                console.log('[Service Worker] ... Error while sending Data', err);
+                            })
+                    }
+                })
+        );
+    }
+});
