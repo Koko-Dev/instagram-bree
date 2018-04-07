@@ -228,10 +228,16 @@ function sendData () {
         })
     })
         .then(function (res) {
-            console.log('sendData() response:  ', res.clone().json());
-
+            console.log('sendData() response:  ', res.clone())
+            return res.json();
+        })
+        .then(function (data) {
+            var dataArray = [];
+            for (var key in data) {
+                dataArray.push(data[key]);
+            }
             // rebuild the data once the data has been sent (because now we can fetch updated data from the backend
-            updateUI(res)
+            updateUI(dataArray);
         })
 }
 
