@@ -7,8 +7,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v124';
-var CACHE_DYNAMIC_NAME = 'dynamic-v115';
+var CACHE_STATIC_NAME = 'static-v130';
+var CACHE_DYNAMIC_NAME = 'dynamic-v121';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -399,14 +399,14 @@ self.addEventListener('sync', function (event) {
     // At this point we know we have connectivity so we send the request to the server
     console.log('[Servcie Worker]... Background Synchronization', event);
     console.log('[Service Worker] ..  the event.tag property -- ', event.tag);
-    if (event.tag === 'sync-new-post') {
+    if (event.tag === 'sync-new-posts') {
         console.log('[Service Worker] ... Synchronization Task tag === "sync-new-post" has been verified');
         event.waitUntil(
             readAllData('syncposts')
                 .then(function (data) {
                     // Send the data to the server
                     // Since User may have posted more than once while offline, we loop through data stored in indexedDB
-                    for (var post of data) {
+                    for (let post of data) {
                         fetch('https://breegrams.firebaseio.com/posts.json', {
                             method: 'POST',
                             headers: {
@@ -421,7 +421,7 @@ self.addEventListener('sync', function (event) {
                             })
                         })
                             .then(function (res) {
-                                console.log('[Service Worker] ... Post response:  ', res)
+                                console.log('[Service Worker] ... Send data - Post response:  ', res)
                                 // Clean up 'syncposts' Object Store in IndexedDB after each post is handled
                                 // Use our deleteItemFromData() method in utility.js to delete each post from indexedDB
                                 if (res.ok) {

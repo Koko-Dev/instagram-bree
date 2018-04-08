@@ -72,7 +72,7 @@ function onSaveButtonClicked(event) {
         caches.open('user-requested')
             .then(function (cache) {
                 cache.add('https://httpbin.org/get');
-                cache.add('/src/images/sf-boat.jpg');
+                cache.add('/src/images/breeGrams-main.jpg');
             });
     }
 }
@@ -266,7 +266,7 @@ form.addEventListener('submit', function (event) {
                 var post = {
                     id: new Date().toISOString() ,
                     title: titleInput.value,
-                    locationInput: locationInput.value
+                    location: locationInput.value
                 };
                 writeData('syncposts', post)
                     .then(function () {
@@ -277,7 +277,7 @@ form.addEventListener('submit', function (event) {
                         // the sync string is an id that clearly ids a given sync task
                         // the sync id is used in the SW to react to reestablish connectivity
                         // It is also used to check which tasks we have left and what we need to do with the task
-                        return sw.sync.register('sync-new-post')
+                        return sw.sync.register('sync-new-posts')
                     })
                     .then(function () {
                         // Access Material Design Lite's Snackbar Container -- A User Notification Feature
@@ -296,8 +296,6 @@ form.addEventListener('submit', function (event) {
         // If the User's Browser does not allow for Service Workers and SyncManager
         // We create a Fallback method sendData()
         sendData();
-        
     }
-    
 });
 
