@@ -7,8 +7,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v130';
-var CACHE_DYNAMIC_NAME = 'dynamic-v121';
+var CACHE_STATIC_NAME = 'static-v131';
+var CACHE_DYNAMIC_NAME = 'dynamic-v122';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -407,7 +407,7 @@ self.addEventListener('sync', function (event) {
                     // Send the data to the server
                     // Since User may have posted more than once while offline, we loop through data stored in indexedDB
                     for (let post of data) {
-                        fetch('https://breegrams.firebaseio.com/posts.json', {
+                        fetch('https://us-central1-breegrams.cloudfunctions.net/storePostData', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -425,7 +425,10 @@ self.addEventListener('sync', function (event) {
                                 // Clean up 'syncposts' Object Store in IndexedDB after each post is handled
                                 // Use our deleteItemFromData() method in utility.js to delete each post from indexedDB
                                 if (res.ok) {
-                                    deleteItemFromData('syncposts', post.id);
+                                    res.json()
+                                        .then(function (resData) {
+                                            deleteItemFromData('syncposts', resData.id);
+                                        })
                                 }
                             })
                             .catch(function (err) {

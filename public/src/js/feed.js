@@ -214,7 +214,7 @@ if ('indexedDB' in window) {
 // Used if the User's Browser does not accept Service Worker and Background Synchronization (syncManager)
 // Directly sends data (POST request) to the Backend (Firebase) without using the Synchronization Event
 function sendData () {
-    fetch('https://breegrams.firebaseio.com/posts.json', {
+    fetch('https://us-central1-breegrams.cloudfunctions.net/storePostData', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
