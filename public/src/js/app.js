@@ -30,8 +30,6 @@ window.addEventListener('beforeinstallprompt', function (event) {
     return false;
 });
 
-
-
 // Notification Helper Function
 function notificationPermissionRequest() {
     // If Notification Permission accepted, implicit Push permission is also given
@@ -41,17 +39,29 @@ function notificationPermissionRequest() {
             console.log('Notifications were not permitted by User');
         } else {
             console.log('Notifications Permission Granted!!!');
-            // Hide notification button
+            // Display my own notification
             displayNotificationConfirm();
         }
     });
 }
 
 function displayNotificationConfirm() {
-    var options = {
-        body: 'Subscription to Notification Services is a Success!'
-    };
-    new Notification('Subscription Success!!', options);
+    // Check to see if a Service Worker is supported in the given navigator
+    if ('serviceWorker' in navigator) {
+        var options = {
+            body: 'Subscription to Notification Services is a Success!'
+        };
+        // To get access to the service worker and the service worker registration
+        // Returns a promise and calls back the service worker registration
+        navigator.serviceWorker.ready
+            .then(function (swreg) {
+                // navigator.serviceWorker.ready is a promise that results in the service worker registration
+                console.log('[app.js] ...   swreg (service worker registration):  ', swreg);
+                swreg.showNotification('[app.js] Subscription Success [from SW]', options);
+            })
+    }
+      // Can be used if there is no Service Worker
+    //new Notification('Subscription Success!!', options);
 }
 
 // If Browser supports Notification, turn on 'Enable Notifications' Button
