@@ -57,7 +57,8 @@ function displayNotificationConfirm() {
             lang: 'en-US', // BCP 47,
             vibrate: [100, 50, 200], //vibration, pause, vibration,
             badge: '/src/images/icons2/icon1-96x96.png', // Android Only,
-            tag: 'confirm-notification'
+            tag: 'confirm-notification', // some OS may override,
+            renotify: true  // ensures every new notification will still vibrate and alert the User,
         };
         // To get access to the service worker and the service worker registration
         // Returns a promise and calls back the service worker registration
