@@ -48,8 +48,10 @@ function notificationPermissionRequest() {
 function displayNotificationConfirm() {
     // Check to see if a Service Worker is supported in the given navigator
     if ('serviceWorker' in navigator) {
+        // Not all options may be displayed.  Depends on the device, not the browser
         var options = {
-            body: 'Subscription to Notification Services is a Success!'
+            body: 'Subscription to Notification Services is a Success!',
+            icon: '/src/images/icons2/icon1-96x96.png'
         };
         // To get access to the service worker and the service worker registration
         // Returns a promise and calls back the service worker registration
@@ -57,7 +59,7 @@ function displayNotificationConfirm() {
             .then(function (swreg) {
                 // navigator.serviceWorker.ready is a promise that results in the service worker registration
                 console.log('[app.js] ...   swreg (service worker registration):  ', swreg);
-                swreg.showNotification('[app.js] Subscription Success [from SW]', options);
+                swreg.showNotification('Subscription Success [from SW]', options);
             })
     }
       // Can be used if there is no Service Worker
