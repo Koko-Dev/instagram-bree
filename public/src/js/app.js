@@ -51,7 +51,14 @@ function displayNotificationConfirm() {
         // Not all options may be displayed.  Depends on the device, not the browser
         var options = {
             body: 'Subscription to Notification Services is a Success!',
-            icon: '/src/images/icons2/icon1-96x96.png'
+            icon: '/src/images/icons2/icon1-96x96.png',
+            image: '/src/images/aftergym.JPG',
+            dir: 'ltr',
+            lang: 'en-US', // BCP 47,
+            vibrate: [100, 50, 200], //vibration, pause, vibration,
+            badge: '/src/images/icons2/icon1-96x96.png' // Android Only
+
+
         };
         // To get access to the service worker and the service worker registration
         // Returns a promise and calls back the service worker registration
