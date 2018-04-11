@@ -468,3 +468,34 @@ self.addEventListener('notificationclick', function (event) {
 self.addEventListener('notificationclose', function (event) {
     console.log('Notification was closed', event);
 });
+
+// Listens for incoming Push Messages from Users who have subscriptions
+// Each subscription on the server has its own endpoint
+// If we send a push message from the server to the subscription's SW who created the subscription, it will receive it
+// So if you unregister a SW, they will not get the message
+self.addEventListener('push', function (event) {
+    console.log('Push Notification Received', event);
+
+    // I want to retrieve from index.js:  JSON.stringify({title: 'New Post', content: 'New Post Added'})
+    // But first I want to see if I have some data attached to this event, and if so, extract it
+    console.log('[Service Worker] ...  push event.data', event.data);
+    var data = {title: 'Something Has Happened', content: 'Here is something you might want to check out.'};
+    if (event.data) {
+        data = JSON.parse(event.data.text());
+    }
+
+    var options = {
+        body: data.content,
+        icon: '/src/images/icon1-96x96.png',
+        badge: '/src/images/icon1-96x96.png'
+    };
+
+    // The active SW can't show a Notification, it can only listen to events running in the background
+    //  so we grab the its registration since that is the part running in the browser,
+    //      the part that connects the SW to the Browser
+    //  Should see a new message coming in whenever we create a new post
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    )
+});
+
