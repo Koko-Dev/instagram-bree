@@ -71,8 +71,8 @@ function displayNotificationConfirm() {
         navigator.serviceWorker.ready
             .then(function (swreg) {
                 // navigator.serviceWorker.ready is a promise that results in the service worker registration
-                console.log('[app.js] ...   swreg (service worker registration):  ', swreg);
-                swreg.showNotification('Subscription Success [from SW]', options);
+                console.log('[app.js] ...navigator.serviceWorker.ready -> Service Worker Registration:  ', swreg);
+                swreg.showNotification('Subscription Success!', options);
             })
     }
       // Can be used if there is no Service Worker
@@ -99,13 +99,38 @@ function pushSubscriptionConfig() {
         .then(function (sub) {
             if (sub === null) {
                 // Create a new subscription
-                swregistration.pushManager.subscribe({
-                    userVisibleOnly: true
+                var vapidPublicKey = 'BA-AHawLJBoI6MkXvK6gjDslfwMsjusr0KRLBrh3AbJ-z6UCedN2zyevMZZCnf6suMSHB9Z8mgHhDCisXClYrr8';
+                var convertedVapidPublicKey = urlBase64ToUint8Array(vapidPublicKey);
+                return swregistration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: convertedVapidPublicKey
                 });
             } else {
                 // We already have a subscription
-                
             }
+        })
+        .then(function (newSubscription) {
+            // Pass the New Subscription to the Firebase Server
+            // Pass a new POST Request to the firebase URL - automatically creates a new subscription's Node
+            // Always add .json when directly targeting the Database
+            return fetch('https://breegrams.firebaseio.com/subscriptions.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(newSubscription)
+            })
+        })
+        .then(function (response) {
+            // Display Confirm Notifiation here stating Successfully Subscribed
+            if (response.ok) {
+                displayNotificationConfirm();
+            }
+        })
+        .catch(function (err) {
+            console.log(err);
+
         })
 }
 
