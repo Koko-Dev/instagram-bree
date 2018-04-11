@@ -98,12 +98,12 @@ function pushSubscriptionConfig() {
         })
         .then(function (sub) {
             if (sub === null) {
-                // Create a new subscription
+                // Create a new subscription: from npm web-push -- https://www.npmjs.com/package/web-push
                 var vapidPublicKey = 'BA-AHawLJBoI6MkXvK6gjDslfwMsjusr0KRLBrh3AbJ-z6UCedN2zyevMZZCnf6suMSHB9Z8mgHhDCisXClYrr8';
-                var convertedVapidPublicKey = urlBase64ToUint8Array(vapidPublicKey);
+                var convertedVapidKey = urlBase64ToUint8Array(vapidPublicKey);
                 return swregistration.pushManager.subscribe({
                     userVisibleOnly: true,
-                    applicationServerKey: convertedVapidPublicKey
+                    applicationServerKey: convertedVapidKey
                 });
             } else {
                 // We already have a subscription
@@ -133,8 +133,6 @@ function pushSubscriptionConfig() {
 
         })
 }
-
-
 
 // If Browser supports Notification, turn on 'Enable Notifications' Button
 if ('Notification' in window && 'serviceWorker' in navigator) {

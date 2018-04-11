@@ -66,6 +66,12 @@ function getItemFromData(st, id) {
         })
 }
 
+// From npm web-push: https://www.npmjs.com/package/web-push
+/*
+    "When using your VAPID key in your web app,
+    you'll need to convert the URL safe base64 string
+    to a Uint8Array to pass into the subscribe call..."
+*/
 function urlBase64ToUint8Array(base64String) {
     var padding = '='.repeat((4 - base64String.length % 4) % 4);
     var base64 = (base64String + padding)
