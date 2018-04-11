@@ -440,3 +440,26 @@ self.addEventListener('sync', function (event) {
         );
     }
 });
+
+self.addEventListener('notificationclick', function (event) {
+    // Find out which notification it was
+    var notification = event.notification;
+
+    // Find out which action was clicked
+    var action = event.action;
+
+    console.log('event.notification == ', notification);
+
+    if (action === 'confirm') {
+        // action: 'confirm' set up in app.js
+        console.log('Confirm was chosen');
+
+        // The User interacted with the notification, so it should be closed, especially in the case of Android
+        notification.close();
+    } else {
+        console.log('Notification was NOT closed.  event.action is: ', action);
+        
+        // User interacted with notifications, so it should be closed, especially in the case of Android
+        notification.close();
+    }
+});
