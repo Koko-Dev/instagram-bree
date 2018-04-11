@@ -458,6 +458,34 @@ self.addEventListener('notificationclick', function (event) {
         notification.close();
     } else {
         console.log('Notification was NOT closed.  event.action is: ', action);
+
+        // Open a Page Upon User Interaction
+        // clients == all window/browser tasks related to the Service Worker
+        // clients.matchAll(): Returns a Promise for an array of Client objects
+        event.waitUntil(
+            clients.matchAll()
+                .then(function (allClients) {
+                    // find ONE visible window managed by the Service Worker and store it in var client
+                    // if find() method returns true then it returns the value of that array element == browser window
+                    //  returns underfined if false
+                    var client = allClients.find(function (findOne) {
+                        return findOne.visibilityState === 'visible';
+                    });
+                    if (client != undefined) {
+                        // navigate to the url
+                        // navigate() method of WindowClient interface loads a specified URL into
+                        //    controlled client page then returns a Promise that resolves to the existing WindowClient
+
+                        client.navigate('http://localhost:8080');
+                        client.focus();
+                    } else {
+                        // openWindow():
+                        //Opens a new browser window for a given url and returns a Promise for the new WindowClient.
+                        clients.openWindow('http://localhost:8080');
+                        
+                    }
+                })
+        );
         
         // User interacted with notifications, so it should be closed, especially in the case of Android
         notification.close();
