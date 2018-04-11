@@ -479,7 +479,9 @@ self.addEventListener('push', function (event) {
     // I want to retrieve from index.js:  JSON.stringify({title: 'New Post', content: 'New Post Added'})
     // But first I want to see if I have some data attached to this event, and if so, extract it
     console.log('[Service Worker] ...  push event.data', event.data);
+
     var data = {title: 'Something Has Happened', content: 'Here is something you might want to check out.'};
+
     if (event.data) {
         data = JSON.parse(event.data.text());
     }
@@ -493,7 +495,8 @@ self.addEventListener('push', function (event) {
     // The active SW can't show a Notification, it can only listen to events running in the background
     //  so we grab the its registration since that is the part running in the browser,
     //      the part that connects the SW to the Browser
-    //  Should see a new message coming in whenever we create a new post
+    //  Should see a new message coming from the server whenever we create a new post
+    //  Fallback is `var data={title:'Something Has Happened',content:'Here is something you might want to check out.'}
     event.waitUntil(
         self.registration.showNotification(data.title, options)
     )
