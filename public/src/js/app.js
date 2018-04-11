@@ -40,7 +40,8 @@ function notificationPermissionRequest() {
         } else {
             console.log('Notifications Permission Granted!!!');
             // Display my own notification
-            displayNotificationConfirm();
+            //displayNotificationConfirm();
+            pushSubscriptionConfig();
         }
     });
 }
@@ -78,8 +79,40 @@ function displayNotificationConfirm() {
     //new Notification('Subscription Success!!', options);
 }
 
+// Subscribe User when they select Okay (action: 'confirm') on Display Notification
+// Subscriptions are manages by the SW in 'push' eventListeners
+function pushSubscriptionConfig() {
+    // Check to see if we have access to Service Workers
+    if (!('serviceWorker' in navigator)) {
+        // If we have no access to SW, just return
+        return;
+    }
+
+    var swregistration;
+    navigator.serviceWorker.ready
+        .then(function (swreg) {
+            swregistration = swreg;
+            // Access push manager and check for existing subscriptions
+            // returns any existing subscriptions (Promise) or null if no subscriptions
+            return swreg.pushManager.getSubscription();
+        })
+        .then(function (sub) {
+            if (sub === null) {
+                // Create a new subscription
+                swregistration.pushManager.subscribe({
+                    userVisibleOnly: true
+                });
+            } else {
+                // We already have a subscription
+                
+            }
+        })
+}
+
+
+
 // If Browser supports Notification, turn on 'Enable Notifications' Button
-if ('Notification' in window) {
+if ('Notification' in window && 'serviceWorker' in navigator) {
     // Loop through all of the notification buttons
     console.log('BROWSER HAS NOTIFICATION CAPABILITIES!!!')
     for (var i = 0; i < enableNotificationButtons.length; i++) {
