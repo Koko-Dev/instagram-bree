@@ -73,7 +73,11 @@ exports.storePostData = functions.https.onRequest(function (request, response) {
                     // For each subscription, Send the Notification
                     // Note, the second parameter is the Push Payload Text, which is JSON
                     // returns a promise
-                    webpush.sendNotification(pushSubscription, JSON.stringify({title: 'New Post', content: 'New Post Added'}))
+                    webpush.sendNotification(pushSubscription, JSON.stringify({
+                        title: 'New Post',
+                        content: 'New Post Added',
+                        openUrl: '/help'
+                    }))
                         .catch(function (err) {
                             console.log(err);
                         });

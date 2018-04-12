@@ -476,13 +476,13 @@ self.addEventListener('notificationclick', function (event) {
                         // navigate() method of WindowClient interface loads a specified URL into
                         //    controlled client page then returns a Promise that resolves to the existing WindowClient
 
-                        client.navigate('http://localhost:8080');
+                        client.navigate(notification.data.url);
                         client.focus();
                     } else {
                         // openWindow():
                         //Opens a new browser window for a given url and returns a Promise for the new WindowClient.
-                        clients.openWindow('http://localhost:8080');
-                        
+                        clients.openWindow(notification.data.url);
+
                     }
                 })
         );
@@ -508,7 +508,11 @@ self.addEventListener('push', function (event) {
     // But first I want to see if I have some data attached to this event, and if so, extract it
     console.log('[Service Worker] ...  push event.data', event.data);
 
-    var data = {title: 'Something Has Happened', content: 'Here is something you might want to check out.'};
+    var data = {
+        title: 'Something Has Happened',
+        content: 'Here is something you might want to check out.',
+        openUrl: '/'
+    };
 
     if (event.data) {
         data = JSON.parse(event.data.text());
@@ -516,8 +520,11 @@ self.addEventListener('push', function (event) {
 
     var options = {
         body: data.content,
+        badge: '/src/images/icon1-96x96.png',
         icon: '/src/images/icon1-96x96.png',
-        badge: '/src/images/icon1-96x96.png'
+        data: {
+            url: data.openUrl
+        }
     };
 
     // The active SW can't show a Notification, it can only listen to events running in the background
