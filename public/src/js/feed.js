@@ -6,6 +6,17 @@ var form = document.querySelector('form');
 var titleInput = document.querySelector('#title');
 var locationInput = document.querySelector('#location');
 
+// For live picture capabilities
+var videoPlayer = document.querySelector('#player');
+var canvasElement = document.querySelector('#canvas');
+var captureButton = document.querySelector('#capture-btn');
+var imagePicker = document.querySelector('#image-picker');
+var imagePickerArea = document.querySelector('#pick-image');
+
+// Initialize Media
+function initializeMedia() {
+        
+}
 
 // click listener  (the big plus sign on main page)
 function openCreatePostModal() {

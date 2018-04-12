@@ -2,7 +2,7 @@
     z-index: 1001;
     position: fixed;
     width: 100%;
-    min-height: 100vh;
+    min-height: calc(100vh - 56px);
     overflow-y: scroll;
     bottom: 0;
     top: 56px;
@@ -62,7 +62,6 @@
 .mdl-spinner {
   margin: auto;
 }
-
 
 @media (min-width: 1761px) and (max-width: 2060px) {
     .shared-moment-card.mdl-card {
