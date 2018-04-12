@@ -106,6 +106,15 @@
 	        We want to post the Title and Location to the Server.-->
 	    
       <div id="create-post">
+        <video id="player" autoplay></video>
+        <canvas id="canvas" width="320px" height="240px"></canvas>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                id="capture-btn">Capture
+        </button>
+        <div id="pick-image">
+          <h6>Pick an Image instead</h6>
+          <input type="file" accept="image/*" id="image-picker">
+        </div>
         <form>
           <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input"
@@ -124,6 +133,14 @@
                    for="location"
                    name="location">Location</label>
           </div>
+          <div class="input-section">
+	        <button class="mdl-button mdl-js-button mdl-button mdl-button--colored"
+                    type="button"
+                    id="location-btn">Get Location
+	        </button>
+            <div class="mdl-spinner mdl-js-spinner is-active" id="location-loader"></div>
+          </div>
+        
           <br>
           <div>
 	          <!--Connect this button to JS so that we can do something about it

@@ -44,6 +44,25 @@
     width: 380px;
 }
 
+#create-post video, #create-post canvas {
+  width: 512px;
+  max-width: 100%;
+  display: none;
+  margin: auto;
+}
+
+#create-post #pick-image {
+  display: none;
+}
+
+#create-post #capture-btn {
+  margin: 10px auto;
+}
+
+.mdl-spinner {
+  margin: auto;
+}
+
 
 @media (min-width: 1761px) and (max-width: 2060px) {
     .shared-moment-card.mdl-card {
