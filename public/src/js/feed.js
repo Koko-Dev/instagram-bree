@@ -13,6 +13,8 @@ var captureButton = document.querySelector('#capture-btn');
 var imagePicker = document.querySelector('#image-picker');
 var imagePickerArea = document.querySelector('#pick-image');
 
+
+// Polyfill to handle browsers which don't quite support the Modern Camera API
 function initializeMedia() {
     if (!('mediaDevices' in navigator)) {
         navigator.mediaDevices = {};
@@ -31,19 +33,34 @@ function initializeMedia() {
             });
         }
     }
-
+    // Gives access to the video on current device
+    // Will prompt the user for access to video the first time only
     navigator.mediaDevices.getUserMedia({video: true})
         .then(function(stream) {
+            // Access the videoplayer through the source object property bound to the stream.
+            // Camera will automatically play because video tag on index.html set to autoplay
+            // Shows ongoing image of device camera
             videoPlayer.srcObject = stream;
+
+            // video player and canvas displays by default are set to none, so we show it here.
             videoPlayer.style.display = 'block';
         })
         .catch(function(err) {
+            // User declined to give access or the User does not have his own getUserMedia access
+            // Or the device does not have a camera
+            // If any of the above, the User at least has a chance of picking and image
             imagePickerArea.style.display = 'block';
         });
 }
 
+
+// Take an image on the click.
+// We get the stream off of the video element, and send it to the canvas
+// Since the canvas displays static content, it automatically take the lastest snapshot
+// Then I stop the video player and all I have left is the canvas element with the latest snapshot
+// And I can then extract that snapshot from the canvas element.
 captureButton.addEventListener('click', function(event) {
-    // show the canvas
+    // show the canvas, empty by default
     canvasElement.style.display = 'block';
 
     // Sets the canvas and disables the video player -- video stream still runs even if display set to 'none'
@@ -52,12 +69,17 @@ captureButton.addEventListener('click', function(event) {
     // Disable button when you take a screen shot
     captureButton.style.display = 'none';
 
-    // Get the stream onto the canvas
+    // Get the stream onto the canvas. Initialize how I want to draw on this canvas (i.e 2d image==screen shot)
     var context = canvasElement.getContext('2d');
+
+    // Draw an image
+    // videoPlayer gives me the stream and I set the dimensions to keep the aspect ratio
     context.drawImage(videoPlayer, 0, 0, canvas.width, videoPlayer.videoHeight / (videoPlayer.videoWidth / canvas.width));
 
-    // getVideoTracks() - Gives access to all video streams on the element
+    // getVideoTracks() - Gives access to all the running video streams on the element
+    // Stop the video stream to save resources.  If I keep the video ongoing then the camera will stay on.
     videoPlayer.srcObject.getVideoTracks().forEach(function(track) {
+        // Stop all of the running tracks
         track.stop();
     });
 });
@@ -117,7 +139,7 @@ function closeCreatePostModal() {
     createPostArea.style.transitionTimingFunction = 'cubic-bezier(0, 1, 0.5, 1)';
     //createPostArea.style.display = 'none';
 
-    // some media housekeeping
+    // some media housekeeping:  setting them back to none so that when we open again, they are hidden
     imagePickerArea.style.display = 'none';
     videoPlayer.style.display = 'none';
     canvasElement.style.display = 'none';

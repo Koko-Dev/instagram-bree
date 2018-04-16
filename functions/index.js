@@ -26,6 +26,12 @@ admin.initializeApp({
     databaseURL: 'https://breegrams.firebaseio.com/',
 });
 
+var googleCloudConfig = {
+    projectId: 'breegrams',
+    keyFilename: 'breegram-key.json'
+};
+var googleCloudStorage = require('')
+
 exports.storePostData = functions.https.onRequest(function (request, response) {
     cors(request, response, function () {
         // Another option here would be to use MongoDB to store Data instead of the Firebase Database
