@@ -13,6 +13,8 @@ var captureButton = document.querySelector('#capture-btn');
 var imagePicker = document.querySelector('#image-picker');
 var imagePickerArea = document.querySelector('#pick-image');
 
+var picture;
+
 
 // Polyfill to handle browsers which don't quite support the Modern Camera API
 function initializeMedia() {
@@ -82,6 +84,8 @@ captureButton.addEventListener('click', function(event) {
         // Stop all of the running tracks
         track.stop();
     });
+    // Will give base 64 representation of the canvas image and converts it to a blob (a file I can use)
+    picture = dataURItoBlob(canvasElement.toDataURL());
 });
 
 
